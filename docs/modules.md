@@ -1,7 +1,7 @@
 # Module Graph
 | Module | Status | Depends on | Exposes |
 |---|---|---|---|
-| data (contract + ingestion) | todo | — | DatasetExample schema, validate CLI, TinyStories loader |
+| data (contract + ingestion) | done | — | DatasetExample schema, validate CLI, TinyStories loader |
 | tokenizer (BPE from scratch) | todo | data | train/encode/decode/save/load |
 | model (GPT blocks) | todo | tokenizer | GPTConfig, GPT, CausalSelfAttention, KV-cache |
 | train (pipeline) | todo | model, tokenizer, data | Trainer, Hydra configs |
