@@ -26,3 +26,8 @@ data/
 # OS
 .DS_Store
 Thumbs.db
+
+# Local agent context (never pushed)
+.opencode/
+AGENTS.md
+PROJECT.md
