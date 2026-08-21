@@ -1,0 +1,38 @@
+[project]
+name = "forge-lm"
+version = "0.0.1"
+description = "ForgeLM - Train, Fine-Tune & Serve a Small Language Model (edge/on-device assistant)"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "datasets>=5.0.0",
+    "hydra-core>=1.3.2",
+    "numpy>=2.0.0",
+    "pydantic>=2.7.0",
+    "tensorboard>=2.16.0",
+    "torch>=2.4.0",
+    "tqdm>=4.66.0",
+]
+
+[dependency-groups]
+dev = [
+    "hypothesis>=6.100.0",
+    "pytest>=8.0.0",
+    "pytest-benchmark>=4.0.0",
+    "ruff>=0.6.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["forger"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
