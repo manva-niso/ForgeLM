@@ -18,7 +18,6 @@ htmlcov/
 checkpoints/
 runs/
 /data/
-*.pt
 *.pth
 *.safetensors
 *.onnx
