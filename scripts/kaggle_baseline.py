@@ -58,7 +58,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--run-name", default="baseline")
     parser.add_argument("--windows-per-story-train", type=int, default=None)
     parser.add_argument("--windows-per-story-eval", type=int, default=None)
-    parser.add_argument("--hf-repo", default=None, help="HF repo id to push checkpoint (needs HF_TOKEN)")
+    parser.add_argument("--hf-repo", default="Manvaniso/forgelm", help="HF repo id to push checkpoint (must be under YOUR HF username; needs HF_TOKEN)")
     args = parser.parse_args(argv)
 
     if args.config:
@@ -132,12 +132,16 @@ def main(argv: list[str] | None = None) -> int:
     print(f"final loss: {trainer.loss_history[-1]:.4f}")
 
     if args.hf_repo:
-        from huggingface_hub import HfApi
+        try:
+            from huggingface_hub import HfApi
 
-        api = HfApi()
-        api.create_repo(args.hf_repo, exist_ok=True, private=True)
-        api.upload_folder(folder_path=args.ckpt_dir, repo_id=args.hf_repo, repo_type="model")
-        print(f"pushed checkpoint to hf.co/{args.hf_repo}")
+            api = HfApi()
+            api.create_repo(args.hf_repo, exist_ok=True, private=True)
+            api.upload_folder(folder_path=args.ckpt_dir, repo_id=args.hf_repo, repo_type="model")
+            print(f"pushed checkpoint to hf.co/{args.hf_repo}")
+        except Exception as exc:  # noqa: BLE001
+            print(f"HF PUSH FAILED: {exc}")
+            print(f"checkpoint is safe at {args.ckpt_dir} - zip it or upload manually")
     return 0
 
 

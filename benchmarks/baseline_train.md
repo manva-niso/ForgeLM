@@ -53,12 +53,12 @@ checkpoint. Validation: eval DECREASING 4.63 -> 4.58, train 3.22.
 | Memorization | none - train tracks eval, both falling |
 
 No collapse. Best checkpoint auto-saved (best_model.pt) and pushed to
-HF Hub `forge-lm/baseline` at the end. Local smoke inference on a 400-story
+HF Hub `Manvaniso/forgelm` at the end. Local smoke inference on a 400-story
 checkpoint already produces coherent story text (see docs/JOURNEY.md §9).
 - Notebook: `scripts/kaggle_baseline.ipynb` (import into Kaggle, GPU T4 x2)
-- Script: `scripts/kaggle_baseline.py --device cuda --steps 4000 --batch-size 64 --context-length 256 --data stream --max-stories 50000 --hf-repo forge-lm/baseline`
+- Script: `scripts/kaggle_baseline.py --device cuda --steps 4000 --batch-size 64 --context-length 256 --data stream --max-stories 50000 --hf-repo Manvaniso/forgelm`
 - Expected: 4k steps on full TinyStories stream; checkpoint pushed to HF Hub
-  `forge-lm/baseline`; pull back via `scripts/download_from_hub.py --repo forge-lm/baseline`
+  `Manvaniso/forgelm`; pull back via `scripts/download_from_hub.py --repo Manvaniso/forgelm`
 - This table will be updated with GPU numbers after the run.
 
 ## Reproducibility
