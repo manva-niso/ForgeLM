@@ -24,6 +24,8 @@ class TrainConfig:
     seed: int = 0
     checkpoint_dir: str = "checkpoints"
     run_name: str = "baseline"
+    windows_per_story_train: int = 8
+    windows_per_story_eval: int = 2
 
     def __post_init__(self) -> None:
         if self.steps <= 0:
@@ -36,6 +38,8 @@ class TrainConfig:
             raise ValueError("warmup_steps must be within [0, steps]")
         if self.grad_accum <= 0:
             raise ValueError("grad_accum must be positive")
+        if self.windows_per_story_train <= 0 or self.windows_per_story_eval <= 0:
+            raise ValueError("windows_per_story must be positive")
 
     @classmethod
     def from_yaml(cls, path: str | Path) -> TrainConfig:

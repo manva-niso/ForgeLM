@@ -105,3 +105,25 @@ Append per work session; do not rewrite old entries.
   encode time sane on the notebook.
 - **HF Hub as the artifact bus:** checkpoint push (Kaggle) / pull (local) via
   huggingface_hub - no zip downloads, versioned, private by default.
+
+## Day 5b - The memorization investigation (2026-08-22)
+
+- **First instinct was wrong:** I blamed "too few windows per story" and
+  changed windows_per_story to 16 before proving anything. The A/B tests then
+  showed 50 stories collapse EVEN at 16 windows - the real lever is TOTAL
+  UNIQUE DATA vs repetition count, not the window multiplier alone.
+  At Kaggle scale (2K stories) 16x windows pushes unique tokens from 512K to
+  ~8M - beyond a 5.25M model's memorization range at 8 epochs. Two levers
+  were documented; only one is free (windows), the other is data/encode speed.
+- **Why eval loss RISES (not just stays):** once memorized, the model's
+  distribution is peaked on train tokens; on unseen text it is confidently
+  wrong -> cross-entropy can exceed the random-init ln(4096)=8.3 ceiling.
+  Reading "eval > initial loss" as a signal is a useful trick.
+- **The warning beats the postmortem:** eval-rise detection in the Trainer
+  means this class of failure announces itself at step ~500, not after a
+  45-minute run.
+- **Kaggle debugging taxonomy:** the 5 failures were (1) import-path
+  semantics, (2) state leaking between runs (stale clone), (3) device
+  placement, (4) secret env semantics (get_secret != export), (5) filesystem
+  cwd lifetime. Each is a known "works locally, breaks in cloud notebooks"
+  class - worth a checklist in docs/kaggle-notebook.md. |

@@ -1,0 +1,16 @@
+steps: 4000
+batch_size: 64
+context_length: 256
+lr: 3.0e-4
+weight_decay: 0.1
+warmup_steps: 100
+grad_accum: 1
+eval_every: 250
+eval_windows: 20
+log_every: 50
+device: cuda
+seed: 0
+checkpoint_dir: checkpoints/baseline
+run_name: baseline
+windows_per_story_train: 16
+windows_per_story_eval: 4
