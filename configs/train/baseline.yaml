@@ -1,0 +1,14 @@
+steps: 500
+batch_size: 8
+context_length: 512
+lr: 3.0e-4
+weight_decay: 0.1
+warmup_steps: 20
+grad_accum: 1
+eval_every: 50
+eval_windows: 20
+log_every: 10
+device: cpu
+seed: 0
+checkpoint_dir: checkpoints
+run_name: baseline

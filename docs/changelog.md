@@ -5,3 +5,4 @@ Append one line per significant change - do not rewrite this file, only append.
 - 2026-08-22 ci: pushed repo, fixed CI (isort known-first-party, forger/data gitignore), added docs/development-log.md. CI green on run 32558803277.
 - 2026-08-22 d2: implemented deterministic byte-level BPE tokenizer with save/load, round-trip tests and reference parity benchmark (10/10 vs HF). Tag v0.0.3.
 - 2026-08-22 d3: implemented GPT model core (RMSNorm, RoPE, sdpa attention, SwiGLU, KV-cache stub, tied head), 10 tests, CPU forward benchmark, ADR-03. Tag v0.0.4.
+- 2026-08-22 d4: implemented training pipeline (WindowDataset, Trainer with AdamW/cosine+warmup/AMP-CUDA/eval/checkpoint/TensorBoard, TrainConfig+YAML), 6 tests, 10-step CPU smoke (8.1s, loss 8.11->7.36), ADR-04. Tag v0.0.5.

@@ -1,0 +1,14 @@
+steps: 10
+batch_size: 4
+context_length: 256
+lr: 3.0e-4
+weight_decay: 0.1
+warmup_steps: 2
+grad_accum: 1
+eval_every: 5
+eval_windows: 5
+log_every: 2
+device: cpu
+seed: 0
+checkpoint_dir: checkpoints/smoke
+run_name: smoke

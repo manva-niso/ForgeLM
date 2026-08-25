@@ -73,3 +73,20 @@ Append per work session; do not rewrite old entries.
 - **Causal validation strategy:** "change later tokens -> earlier logits must
   not change" is the cleanest, most direct test of causality - catches mask
   bugs that shape tests miss.
+
+## Day 4 - Training pipeline (2026-08-22)
+
+- **AMP only on CUDA, fp32 on CPU:** measured bf16 autocast 7x SLOWER on this
+  CPU (1.35s vs 0.19s forward) - the "bf16 on CPU" assumption from the plan
+  was wrong for this hardware. Measurement over convention; Kaggle T4 keeps
+  fp16 + GradScaler where AMP actually wins.
+- **Deterministic get_batch(step) instead of a shuffled iterator:** makes
+  resume trivially exact (test proves bit-identical losses). Cost: windows
+  repeat after the pool is exhausted - fine for small runs; Kaggle will use
+  the full corpus stream.
+- **Schedule depends on total steps:** resume must reuse the ORIGINAL steps
+  total (cosine denominator), so training to a partial count goes through
+  `train(until=N)` - a test bug (different denominator) exposed this.
+- **Resume test = full + partial + compare:** the strongest form; three
+  separate test bugs (shared config mutation, LR-schedule mismatch, unseeded
+  inits) had to be fixed before it passed - each one documented in the dev log.

@@ -22,16 +22,72 @@ Update this file as the build progresses (Day 4/5 = baseline, Day 8 = LoRA SFT, 
       os.system("pip install -q datasets tokenizers tqdm tensorboard hydra-core")
       ```
 
-## 1. Baseline training (Day 5 - Tue 2026-08-25) - TBD after Day 4
+## 1. Baseline training (Day 5 - Tue 2026-08-25) - READY
 
-Planned contents:
-- Pull tokenizer artifact + data contract from repo
-- Stream TinyStories (full corpus, not just sample)
-- Load `forger.train.Trainer` with `configs/train/baseline.yaml` (GPU params: bs 64, ctx 256, ~4k steps)
-- Train ~30-45 min on T4
-- Save checkpoint (state dict + config) and push to HF Hub (`forge-lm/baseline`)
-- Download `final.pt`, `train_log.json`, `eval_loss.json` back to local repo
-- Fill evidence into `benchmarks/baseline_train.md`
+Run these cells in the Kaggle notebook (Accelerator: GPU T4 x2):
+
+```python
+# Cell 1 - setup
+import os
+os.system("git clone https://github.com/manva-niso/ForgeLM.git /kaggle/working/forge-lm")
+os.chdir("/kaggle/working/forge-lm")
+os.system("pip install -q --disable-pip-version-check torch --index-url https://download.pytorch.org/whl/cu121")
+os.system("pip install -q --disable-pip-version-check datasets pyyaml tensorboard tqdm")
+```
+
+```python
+# Cell 2 - config + tokenizer + full TinyStories stream
+from forger.tokenizer.bpe import BPETokenizer
+from forger.train.dataset import WindowDataset
+from forger.train.config import TrainConfig
+from forger.model.config import GPTConfig
+from forger.model.gpt import GPT
+from forger.train.trainer import Trainer
+from datasets import load_dataset
+
+tok = BPETokenizer.load("artifacts/tokenizer")
+cfg = TrainConfig(steps=4000, batch_size=64, context_length=256, lr=3e-4,
+                  warmup_steps=100, grad_accum=1, eval_every=250, eval_windows=20,
+                  log_every=50, device="cuda", seed=0,
+                  checkpoint_dir="/kaggle/working/ckpt", run_name="baseline")
+# NOTE: WindowDataset needs a list of texts; for full TinyStories build from stream:
+ds = load_dataset("roneneldan/TinyStories", split="train", streaming=True)
+texts = [ex["text"] for ex in ds.take(50000)]
+encoded = [tok.encode(t) for t in texts]
+split = int(len(encoded) * 0.95)
+train_data = WindowDataset(texts[:split], tok, 256, encoded_ids=encoded[:split])
+eval_data = WindowDataset(texts[split:], tok, 256, encoded_ids=encoded[split:])
+model = GPT(GPTConfig(vocab_size=len(tok.token_bytes), context_length=256))
+```
+
+```python
+# Cell 3 - train + save (checkpoint incl. train_log.json / eval_log.json)
+trainer = Trainer(model, cfg, train_data, eval_data)
+trainer.train()
+trainer.save()
+print("train steps:", trainer.step, "final loss:", trainer.loss_history[-1])
+```
+
+```python
+# Cell 4 - push checkpoint to HF Hub (secrets: HF_TOKEN with write scope)
+from huggingface_hub import HfApi
+api = HfApi(token=os.environ.get("HF_TOKEN"))
+api.create_repo("forge-lm/baseline", exist_ok=True, private=True)
+api.upload_folder(folder_path="/kaggle/working/ckpt",
+                  repo_id="forge-lm/baseline",
+                  repo_type="model")
+```
+
+```python
+# Cell 5 - evidence numbers for benchmarks/baseline_train.md
+import time, torch
+print("final eval loss:", trainer.eval_history[-1])
+print("wall time:", <capture from cell 3 timing>)
+```
+
+After the run: download the checkpoint locally, run smoke inference, fill
+`benchmarks/baseline_train.md` (config, GPU type, wall-time, loss curves PNG
+from TensorBoard `runs/baseline`).
 
 ## 2. LoRA SFT (Day 8 - Fri 2026-08-28) - TBD
 

@@ -29,6 +29,7 @@ Append after every significant work session. Do not rewrite old entries.
 | 2026-08-22 | Push + CI validation | Remote added (`origin`), `main` + tags pushed; CI made green (see error log) | GitHub Actions run 32558803277 success |
 | 2026-08-22 | Day 2: BPE tokenizer | `forger/tokenizer/bpe.py` (byte-level BPE: train/encode/decode/save/load), `forger/tokenizer/train.py` CLI, `tests/test_bpe.py` (17 tests), `scripts/tokenizer_parity.py`, artifact `artifacts/tokenizer/`, `docs/decisions/ADR-02-tokenizer.md`, `benchmarks/tokenizer_parity.md` (10/10 parity), `docs/kaggle-notebook.md` | 23 tests green; parity 10/10; commit + tag v0.0.3 |
 | 2026-08-22 | Day 3: model core | `forger/model/{config,blocks,gpt}.py` (GPTConfig, RMSNorm, RoPE, CausalSelfAttention, SwiGLU MLP, Block, GPT, KV-cache stub), `tests/test_model.py` (10 tests), `scripts/benchmark_model.py`, `benchmarks/model_forward.md` (211ms/512tok, 4,855 tok/s), `docs/decisions/ADR-03-model-core.md` | 33 tests green; commit + tag v0.0.4 |
+| 2026-08-22 | Day 4: training pipeline | `forger/train/{config,dataset,trainer}.py`, `configs/train/{baseline,smoke}.yaml`, `tests/test_trainer.py` (6 tests), `docs/decisions/ADR-04-train-pipeline.md`, `benchmarks/train_smoke.md` | 39 tests green; smoke 10 steps in 8.1s (loss 8.11->7.36); commit + tag v0.0.5 |
 
 ## Error log
 
@@ -48,6 +49,10 @@ Append after every significant work session. Do not rewrite old entries.
 | 2026-08-22 | RoPE shape error (64 vs 32) | cos/sin cached at dim/2, applied to full head_dim | duplicate freqs along pair dim (blocks.py) |
 | 2026-08-22 | KV-cache decode mismatch (1e-3) | RoPE rotated decode tokens by position 0, not global offset | `rope(q, k, offset=past_len)` |
 | 2026-08-22 | KV-cache chunk mismatch (0.5) | `is_causal=True` with T_q != T_k masks cached keys; also bool attn_mask means True=attend | explicit float(-inf) triu mask over the new-chunk columns |
+| 2026-08-22 | resume test: empty loss_history | test mutated shared config (cfg_b.steps=5) -> resumed trainer range(5,5) | separate cfg_partial object |
+| 2026-08-22 | resume test: loss mismatch | partial run used 5-step LR schedule (different cosine denominator) | `train(until=N)` keeps the full-run schedule |
+| 2026-08-22 | resume test: 0.02 loss diff | test models created from different random inits | seed both model creations identically |
+| 2026-08-22 | smoke CLI: 15-min timeout, no output | encode 1000 stories twice (~6 min) + bf16 CPU autocast 7x slower than fp32 (1.35s vs 0.19s/forward) | encode once via `encoded_ids`; CPU = fp32 (AMP only on CUDA); `configs/train/smoke.yaml` (bs 4, ctx 256) -> 10 steps in 8.1s |
 
 ## Rules going forward
 
