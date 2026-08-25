@@ -12,3 +12,5 @@ device: cuda
 seed: 0
 checkpoint_dir: checkpoints/baseline
 run_name: baseline
+windows_per_story_train: 16
+windows_per_story_eval: 4

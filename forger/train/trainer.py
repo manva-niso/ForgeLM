@@ -114,6 +114,13 @@ class Trainer:
                 self.eval_history.append((step + 1, eval_loss))
                 self.writer.add_scalar("eval/loss", eval_loss, step)
                 print(f"step {step + 1} eval loss {eval_loss:.4f}")
+                if len(self.eval_history) >= 3 and all(
+                    e < eval_loss for _, e in self.eval_history[-3:]
+                ):
+                    print(
+                        "WARNING: eval loss rising 3 evals in a row - possible memorization "
+                        "(add more data, raise windows_per_story, or reduce steps)"
+                    )
             self.step = step + 1
 
     def save(self, directory: str | Path | None = None) -> Path:
