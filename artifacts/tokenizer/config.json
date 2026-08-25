@@ -1,0 +1,5 @@
+{
+ "vocab_size": 4096,
+ "pretokenize": "gpt2",
+ "version": 1
+}

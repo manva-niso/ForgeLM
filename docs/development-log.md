@@ -27,6 +27,7 @@ Append after every significant work session. Do not rewrite old entries.
 | 2026-08-21 | Day 1: product + data contract | `docs/PRODUCT_CONTRACT.md`, `docs/decisions/ADR-01-project-charter.md`, `forger/data/contract.py`, `tests/test_contract.py`, `scripts/download_tinystories.py`, `.github/workflows/ci.yml` | 6 tests green; sample 1000/1000 valid; commit 8f330f0, tag v0.0.2 |
 | 2026-08-21 | Day 1 evidence | `benchmarks/data_contract.md` (validation run, sha256, test counts) | commit 4b6a2a2 |
 | 2026-08-22 | Push + CI validation | Remote added (`origin`), `main` + tags pushed; CI made green (see error log) | GitHub Actions run 32558803277 success |
+| 2026-08-22 | Day 2: BPE tokenizer | `forger/tokenizer/bpe.py` (byte-level BPE: train/encode/decode/save/load), `forger/tokenizer/train.py` CLI, `tests/test_bpe.py` (17 tests), `scripts/tokenizer_parity.py`, artifact `artifacts/tokenizer/`, `docs/decisions/ADR-02-tokenizer.md`, `benchmarks/tokenizer_parity.md` (10/10 parity), `docs/kaggle-notebook.md` | 23 tests green; parity 10/10; commit + tag v0.0.3 |
 
 ## Error log
 
@@ -38,6 +39,11 @@ Append after every significant work session. Do not rewrite old entries.
 | 2026-08-22 | CI fail 1: ruff `I001` import sort ×2 (Linux only) | ruff treats `forger` as third-party (not recognized as first-party) | `pyproject.toml` added `[tool.ruff.lint.isort] known-first-party = ["forger"]` |
 | 2026-08-22 | CI fail 2: `ModuleNotFoundError: forger.data` on fresh checkout | `.gitignore` bare `data/` pattern ignored the `forger/data/` package dir | `.gitignore` changed `data/` -> `/data/`; tracked `forger/data/{__init__,contract}.py` |
 | 2026-08-22 | (Non-issue) ruff `EXE002` in Docker repro | NTFS mount exposes files as executable (mount artifact, not real) | none — reproduced via in-container git clone instead |
+| 2026-08-22 | `KeyError: 104` in save/load test | `byte_to_id` in `load()` keyed by bytes object instead of byte value | `forger/tokenizer/bpe.py` `byte_to_id = {b[0]: i ...}` |
+| 2026-08-22 | `KeyError: -1` in training | pair counter only skipped `pair[1] == -1` (piece separator), not `pair[0] == -1` | `forger/tokenizer/bpe.py` skip both |
+| 2026-08-22 | Training timeout >15min on 800K chars | naive per-merge full-corpus rescans in pure Python | flattened corpus + local-var loops + `--max-chars` 200K default (89s) |
+| 2026-08-22 | `models.BPE(vocab=...)` TypeError (tokenizers 0.23) | new API expects `Dict[token, int]`, not id->token dict | `scripts/tokenizer_parity.py` passes inverted dict + merges tuples |
+| 2026-08-22 | encode 12.6s/pass slow | `_ranks` dict rebuilt per piece inside `_bpe` | cached `self._ranks` in `__init__` (8.3s/pass) |
 
 ## Rules going forward
 
