@@ -26,8 +26,7 @@ class WindowDataset:
         rng = random.Random(0)
         self.windows: list[tuple[list[int], list[int]]] = []
         for ids in encoded:
-            n = min(windows_per_story, max(1, len(ids) // context_length))
-            for _ in range(n):
+            for _ in range(windows_per_story):
                 start = rng.randrange(0, len(ids) - context_length)
                 x = ids[start : start + context_length]
                 y = ids[start + 1 : start + context_length + 1]

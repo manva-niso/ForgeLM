@@ -36,6 +36,12 @@ adds redundant views only. Real lever = story count, gated by encoder speed.
 Encoder optimized 20x (37.3s -> 1.8s per 20 stories; single-pass rank scan +
 piece cache, parity still 10/10). Kaggle re-run now uses 20000 stories.
 
+CORRECTION 2 (the real root cause): `min(windows_per_story, len//ctx)` capped
+crops at 1 for stories < 2x ctx, and ctx 256 discarded 91% of TinyStories
+(avg story ~150 tokens). Fixed: unconditional windows_per_story + kaggle
+context 128 (97% qualify; 6176 vs 386 windows for 400 stories) + best-eval
+checkpoint. Validation: eval DECREASING 4.63 -> 4.58, train 3.22.
+
 ## Run 2b - Kaggle T4 (pending upgrade, ~30-45 min)
 - Notebook: `scripts/kaggle_baseline.ipynb` (import into Kaggle, GPU T4 x2)
 - Script: `scripts/kaggle_baseline.py --device cuda --steps 4000 --batch-size 64 --context-length 256 --data stream --max-stories 50000 --hf-repo forge-lm/baseline`
