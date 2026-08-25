@@ -36,6 +36,7 @@ class Trainer:
         self.train_data = train_data
         self.eval_data = eval_data
         torch.manual_seed(config.seed)
+        self.model.to(self._device())
         self.optimizer = torch.optim.AdamW(
             model.parameters(), lr=config.lr, weight_decay=config.weight_decay, betas=(0.9, 0.95)
         )

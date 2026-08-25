@@ -101,6 +101,14 @@ def test_resume_matches_uninterrupted(tmp_path):
     assert trainer_resumed.loss_history == trainer_full.loss_history[5:]
 
 
+def test_model_moved_to_device():
+    model = GPT(CFG)
+    train_data, eval_data = _datasets()
+    cfg = TrainConfig(**{**TRAIN_CFG.to_dict(), "device": "cpu"})
+    trainer = Trainer(model, cfg, train_data, eval_data)
+    assert next(trainer.model.parameters()).device.type == "cpu"
+
+
 def test_checkpoint_contains_optimizer_state(tmp_path):
     model = GPT(CFG)
     train_data, eval_data = _datasets()
