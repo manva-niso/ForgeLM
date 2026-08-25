@@ -11,3 +11,4 @@ Append one line per significant change - do not rewrite this file, only append.
 - 2026-08-22 d5c: encoder 20x speedup (single-pass rank scan + piece cache; 37.3s->1.8s, parity 10/10); memorization correction (unique data = stories, not windows); Kaggle max-stories 20000. Tag v0.0.8.
 - 2026-08-22 d5d: real root cause - windows_per_story capped at 1 by len//ctx AND ctx 256 discarded 91% of TinyStories; uncapped crops, kaggle ctx 128, best-eval checkpoint. Eval now decreasing (4.63->4.58). Tag v0.0.9.
 - 2026-08-22 d5e: Kaggle run 2b healthy - 20K stories, 293K train windows, eval 3.42->2.08 all NEW BEST, no memorization; trainer saves model.pt+config.json for GPT.load; scripts/smoke_infer.py (model speaks coherent TinyStories). Tag v0.0.10.
+- 2026-08-22 d5f: baseline COMPLETE - HF repo Manvaniso/forgelm, final eval 2.0247, fluent generations, checkpoint pulled locally. Tag v0.1.0.
