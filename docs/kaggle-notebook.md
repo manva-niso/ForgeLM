@@ -1,7 +1,14 @@
 # Kaggle Notebook Tracker
 
-Living checklist of everything to run/paste in the Kaggle notebook for each GPU phase.
-Update this file as the build progresses (Day 4/5 = baseline, Day 8 = LoRA SFT, Day 9 = QLoRA).
+Living checklist for the Kaggle GPU notebook. **Kaggle runs the `kaggle` branch**
+(clone + `git checkout kaggle`); local dev stays on `main`. Keep `main` merged
+into `kaggle` after every local change.
+
+## Branch policy
+- `main` - local CPU dev, tests, evidence.
+- `kaggle` - GPU runs: same code + `configs/train/kaggle.yaml` (cuda, bs 64,
+  ctx 256, 4000 steps) + the Kaggle-edition notebook.
+- Sync: after each local day, `git checkout kaggle && git merge main && git push`.
 
 ## 0. Setup (once per project)
 
