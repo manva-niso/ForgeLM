@@ -32,6 +32,8 @@ Append after every significant work session. Do not rewrite old entries.
 | 2026-08-22 | Day 4: training pipeline | `forger/train/{config,dataset,trainer}.py`, `configs/train/{baseline,smoke}.yaml`, `tests/test_trainer.py` (6 tests), `docs/decisions/ADR-04-train-pipeline.md`, `benchmarks/train_smoke.md` | 39 tests green; smoke 10 steps in 8.1s (loss 8.11->7.36); commit + tag v0.0.5 |
 | 2026-08-22 | Day 5: baseline training | `scripts/kaggle_baseline.py` (CPU/CUDA entry), `scripts/kaggle_baseline.ipynb` (Kaggle import), `scripts/download_from_hub.py`, `benchmarks/baseline_train.md`, `docs/decisions/ADR-05-baseline.md`; checkpoint `checkpoints/baseline/` | 300-step CPU run: 358s, loss 8.11->3.34 train / 3.95 eval; commit + tag v0.0.6 |
 | 2026-08-22 | Kaggle run 1 failed | `ModuleNotFoundError: forger` - `python scripts/x.py` puts `scripts/` on sys.path, package not installed on Kaggle | `sys.path.insert` repo root in `scripts/kaggle_baseline.py`; also capped max-stories 2000 (encode ~0.17s/story -> 50k stories would take ~2.4h) |
+| 2026-08-22 | Kaggle run 2 failed (same error) | stale `/kaggle/working/forge-lm` from run 1 - `git clone` fails silently, old script ran | notebook wipes dir before re-clone + `import forger` check |
+| 2026-08-22 | Kaggle run 3 failed | `index on cuda:0, weights on cpu` - Trainer never moved model to config.device | `model.to(device)` in `Trainer.__init__` + device regression test |
 
 ## Error log
 
