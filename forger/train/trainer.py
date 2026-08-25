@@ -147,6 +147,10 @@ class Trainer:
         if self.best_state is not None:
             torch.save(self.best_state, out / "best_model.pt")
             (out / "best_eval.json").write_text(json.dumps(self.best_eval_loss), encoding="utf-8")
+        torch.save(self.model.state_dict(), out / "model.pt")
+        (out / "config.json").write_text(
+            json.dumps(self.model.config.to_dict(), indent=1), encoding="utf-8"
+        )
         (out / "train_log.json").write_text(json.dumps(self.loss_history), encoding="utf-8")
         (out / "eval_log.json").write_text(json.dumps(self.eval_history), encoding="utf-8")
         return out

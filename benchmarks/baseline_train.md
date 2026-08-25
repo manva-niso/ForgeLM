@@ -42,7 +42,19 @@ crops at 1 for stories < 2x ctx, and ctx 256 discarded 91% of TinyStories
 context 128 (97% qualify; 6176 vs 386 windows for 400 stories) + best-eval
 checkpoint. Validation: eval DECREASING 4.63 -> 4.58, train 3.22.
 
-## Run 2b - Kaggle T4 (pending upgrade, ~30-45 min)
+## Run 2b - Kaggle T4 (IN PROGRESS - 2026-08-22)
+| Item | Value |
+|---|---|
+| Data | 20,000 TinyStories stories (stream), encode 529s |
+| Windows | train 293,200 / eval 3,812 (ctx 128, 16 crops/story) |
+| Config | bs 64, ctx 128, lr 3e-4, warmup 100, steps 4000, T4 |
+| At step 2850 | train 2.02, eval 2.08 (every eval a NEW BEST) |
+| Trajectory | eval 3.42 (250) -> 2.86 (500) -> 2.44 (1000) -> 2.13 (2000) -> 2.08 (2750) |
+| Memorization | none - train tracks eval, both falling |
+
+No collapse. Best checkpoint auto-saved (best_model.pt) and pushed to
+HF Hub `forge-lm/baseline` at the end. Local smoke inference on a 400-story
+checkpoint already produces coherent story text (see docs/JOURNEY.md §9).
 - Notebook: `scripts/kaggle_baseline.ipynb` (import into Kaggle, GPU T4 x2)
 - Script: `scripts/kaggle_baseline.py --device cuda --steps 4000 --batch-size 64 --context-length 256 --data stream --max-stories 50000 --hf-repo forge-lm/baseline`
 - Expected: 4k steps on full TinyStories stream; checkpoint pushed to HF Hub
