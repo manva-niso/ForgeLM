@@ -3,7 +3,7 @@
 |---|---|---|---|
 | data (contract + ingestion) | done | — | DatasetExample schema, validate CLI, TinyStories loader |
 | tokenizer (BPE from scratch) | done | data | train/encode/decode/save/load |
-| model (GPT blocks) | todo | tokenizer | GPTConfig, GPT, CausalSelfAttention, KV-cache |
+| model (GPT blocks) | done | tokenizer | GPTConfig, GPT, CausalSelfAttention, KV-cache |
 | train (pipeline) | todo | model, tokenizer, data | Trainer, Hydra configs |
 | baseline training | todo | train | checkpoint, benchmark report |
 | eval (harness) | todo | model | perplexity, generation, metrics |

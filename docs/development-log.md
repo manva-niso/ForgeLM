@@ -28,6 +28,7 @@ Append after every significant work session. Do not rewrite old entries.
 | 2026-08-21 | Day 1 evidence | `benchmarks/data_contract.md` (validation run, sha256, test counts) | commit 4b6a2a2 |
 | 2026-08-22 | Push + CI validation | Remote added (`origin`), `main` + tags pushed; CI made green (see error log) | GitHub Actions run 32558803277 success |
 | 2026-08-22 | Day 2: BPE tokenizer | `forger/tokenizer/bpe.py` (byte-level BPE: train/encode/decode/save/load), `forger/tokenizer/train.py` CLI, `tests/test_bpe.py` (17 tests), `scripts/tokenizer_parity.py`, artifact `artifacts/tokenizer/`, `docs/decisions/ADR-02-tokenizer.md`, `benchmarks/tokenizer_parity.md` (10/10 parity), `docs/kaggle-notebook.md` | 23 tests green; parity 10/10; commit + tag v0.0.3 |
+| 2026-08-22 | Day 3: model core | `forger/model/{config,blocks,gpt}.py` (GPTConfig, RMSNorm, RoPE, CausalSelfAttention, SwiGLU MLP, Block, GPT, KV-cache stub), `tests/test_model.py` (10 tests), `scripts/benchmark_model.py`, `benchmarks/model_forward.md` (211ms/512tok, 4,855 tok/s), `docs/decisions/ADR-03-model-core.md` | 33 tests green; commit + tag v0.0.4 |
 
 ## Error log
 
@@ -44,6 +45,9 @@ Append after every significant work session. Do not rewrite old entries.
 | 2026-08-22 | Training timeout >15min on 800K chars | naive per-merge full-corpus rescans in pure Python | flattened corpus + local-var loops + `--max-chars` 200K default (89s) |
 | 2026-08-22 | `models.BPE(vocab=...)` TypeError (tokenizers 0.23) | new API expects `Dict[token, int]`, not id->token dict | `scripts/tokenizer_parity.py` passes inverted dict + merges tuples |
 | 2026-08-22 | encode 12.6s/pass slow | `_ranks` dict rebuilt per piece inside `_bpe` | cached `self._ranks` in `__init__` (8.3s/pass) |
+| 2026-08-22 | RoPE shape error (64 vs 32) | cos/sin cached at dim/2, applied to full head_dim | duplicate freqs along pair dim (blocks.py) |
+| 2026-08-22 | KV-cache decode mismatch (1e-3) | RoPE rotated decode tokens by position 0, not global offset | `rope(q, k, offset=past_len)` |
+| 2026-08-22 | KV-cache chunk mismatch (0.5) | `is_causal=True` with T_q != T_k masks cached keys; also bool attn_mask means True=attend | explicit float(-inf) triu mask over the new-chunk columns |
 
 ## Rules going forward
 

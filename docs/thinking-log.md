@@ -52,3 +52,24 @@ Append per work session; do not rewrite old entries.
 - Every significant design decision gets a "why" entry here with alternatives
   considered.
 - Keep entries short (3-8 lines); this is a pointer doc, not a transcript.
+
+## Day 3 - Model core (2026-08-22)
+
+- **RoPE over learned absolute embeddings:** no extra params, length-generalizes
+  beyond trained context, standard in modern LMs; absolute embeddings were the
+  fallback if RoPE proved buggy (it did - twice - but was worth fixing).
+- **RMSNorm over LayerNorm:** no bias, one learnable scale, ~20% cheaper; modern
+  LLMs (LLaMA) use it. Tiny downside: no shift learnable - irrelevant here.
+- **SwiGLU over ReLU/GELU MLP:** better quality per param, standard since
+  LLaMA; costs a third projection (2d -> 4d -> d instead of d -> 4d -> d) -
+  the main reason params came to 5.25M vs the 3.6M estimate. Kept: quality
+  matters more than the plan's estimate; still 5x under the 25M cap.
+- **sdpa instead of hand-rolled attention:** flash-attention kernels for free on
+  CUDA, fused softmax masking, less code to get wrong. The mask semantics trap
+  (bool=True means ATTEND in sdpa) is now documented in ADR-03 for posterity.
+- **KV-cache stub on Day 3, real caching Day 7:** the stub proves the cache
+  contract (identical logits) while keeping Day 3 scope small. Real perf work
+  belongs with the inference day.
+- **Causal validation strategy:** "change later tokens -> earlier logits must
+  not change" is the cleanest, most direct test of causality - catches mask
+  bugs that shape tests miss.
