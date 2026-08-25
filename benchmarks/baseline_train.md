@@ -25,12 +25,16 @@ still improving at step 300 -> more steps would help (Kaggle run).
 | Setup | final train loss | final eval loss | verdict |
 |---|---|---|---|
 | 50 stories, 1 win, 400 steps | 0.14 | 7.46 | memorized |
-| 50 stories, 16 win, 400 steps | 0.15 | 7.84 | memorized (data too small either way) |
-| 400 stories, 1 win, 600 steps | 2.71 | 4.92 | healthy |
-| 400 stories, 16 win, 600 steps | 2.80 | 4.89 | healthy |
+| 50 stories, 16 win, 400 steps | 0.15 | 7.84 | memorized |
+| 400 stories, 1 win, 600 steps | 2.71 | 4.92 | not yet collapsed |
+| 400 stories, 16 win, 600 steps | 2.80 | 4.89 | not yet collapsed |
+| 400 stories, 16 win, 1200 steps | ~2.5 | 5.09 -> 5.66 | memorization creeping back |
 
-Conclusion: unique-data volume is the lever; 16 windows = 16x unique data at
-zero extra encode cost. Kaggle re-run (Run 2b) pending with the fix.
+CORRECTION: windows from the same story overlap ~completely; unique data =
+stories x tokens (400 stories = ~52K unique tokens). The window multiplier
+adds redundant views only. Real lever = story count, gated by encoder speed.
+Encoder optimized 20x (37.3s -> 1.8s per 20 stories; single-pass rank scan +
+piece cache, parity still 10/10). Kaggle re-run now uses 20000 stories.
 
 ## Run 2b - Kaggle T4 (pending upgrade, ~30-45 min)
 - Notebook: `scripts/kaggle_baseline.ipynb` (import into Kaggle, GPU T4 x2)

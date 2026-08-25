@@ -8,3 +8,4 @@ Append one line per significant change - do not rewrite this file, only append.
 - 2026-08-22 d4: implemented training pipeline (WindowDataset, Trainer with AdamW/cosine+warmup/AMP-CUDA/eval/checkpoint/TensorBoard, TrainConfig+YAML), 6 tests, 10-step CPU smoke (8.1s, loss 8.11->7.36), ADR-04. Tag v0.0.5.
 - 2026-08-22 d5: baseline trained on CPU (300 steps, 358s, loss 8.11->3.34/3.95 eval); Kaggle notebook + script + HF Hub downloader shipped; ADR-05. Tag v0.0.6.
 - 2026-08-22 d5b: Kaggle debugging + memorization fix - windows_per_story 16/4 (was 1/1), eval-rise warning, kaggle branch, A/B evidence, docs/JOURNEY.md. Tag v0.0.7.
+- 2026-08-22 d5c: encoder 20x speedup (single-pass rank scan + piece cache; 37.3s->1.8s, parity 10/10); memorization correction (unique data = stories, not windows); Kaggle max-stories 20000. Tag v0.0.8.

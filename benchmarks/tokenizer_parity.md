@@ -26,9 +26,9 @@
 ## Timing (50 TinyStories stories, ~seconds/encode pass)
 | Implementation | s/pass |
 |---|---|
-| ours | 8.2734 |
-| HF reference | 0.0187 |
-| speed ratio (ours/HF) | 441.2x |
+| ours | 0.3570 |
+| HF reference | 0.0437 |
+| speed ratio (ours/HF) | 8.2x |
 
 ## Notes
 - Same vocab/merges => identical encoding is expected where algorithms agree.
