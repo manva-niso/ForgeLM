@@ -90,3 +90,18 @@ Append per work session; do not rewrite old entries.
 - **Resume test = full + partial + compare:** the strongest form; three
   separate test bugs (shared config mutation, LR-schedule mismatch, unseeded
   inits) had to be fixed before it passed - each one documented in the dev log.
+
+## Day 5 - Baseline training (2026-08-22)
+
+- **CPU-first baseline before Kaggle:** the vertical-slice rule wants evidence
+  today, not "whenever GPU access happens". 300 steps on CPU (6 min) produced a
+  real checkpoint + curves and proved the exact code path Kaggle will run.
+  GPU only changes `--device`.
+- **One script, two targets:** `kaggle_baseline.py` doubles as the Kaggle cell
+  body and the local command - no divergent code paths to debug later.
+- **Why bs 64/ctx 256 for the T4 run (not bs 8/ctx 512):** bigger batch = more
+  stable gradients + faster wall-clock; ctx 256 matches the 4x smaller memory
+  per sample and TinyStories stories are short; 50K stories stream keeps
+  encode time sane on the notebook.
+- **HF Hub as the artifact bus:** checkpoint push (Kaggle) / pull (local) via
+  huggingface_hub - no zip downloads, versioned, private by default.

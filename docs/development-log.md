@@ -30,6 +30,7 @@ Append after every significant work session. Do not rewrite old entries.
 | 2026-08-22 | Day 2: BPE tokenizer | `forger/tokenizer/bpe.py` (byte-level BPE: train/encode/decode/save/load), `forger/tokenizer/train.py` CLI, `tests/test_bpe.py` (17 tests), `scripts/tokenizer_parity.py`, artifact `artifacts/tokenizer/`, `docs/decisions/ADR-02-tokenizer.md`, `benchmarks/tokenizer_parity.md` (10/10 parity), `docs/kaggle-notebook.md` | 23 tests green; parity 10/10; commit + tag v0.0.3 |
 | 2026-08-22 | Day 3: model core | `forger/model/{config,blocks,gpt}.py` (GPTConfig, RMSNorm, RoPE, CausalSelfAttention, SwiGLU MLP, Block, GPT, KV-cache stub), `tests/test_model.py` (10 tests), `scripts/benchmark_model.py`, `benchmarks/model_forward.md` (211ms/512tok, 4,855 tok/s), `docs/decisions/ADR-03-model-core.md` | 33 tests green; commit + tag v0.0.4 |
 | 2026-08-22 | Day 4: training pipeline | `forger/train/{config,dataset,trainer}.py`, `configs/train/{baseline,smoke}.yaml`, `tests/test_trainer.py` (6 tests), `docs/decisions/ADR-04-train-pipeline.md`, `benchmarks/train_smoke.md` | 39 tests green; smoke 10 steps in 8.1s (loss 8.11->7.36); commit + tag v0.0.5 |
+| 2026-08-22 | Day 5: baseline training | `scripts/kaggle_baseline.py` (CPU/CUDA entry), `scripts/kaggle_baseline.ipynb` (Kaggle import), `scripts/download_from_hub.py`, `benchmarks/baseline_train.md`, `docs/decisions/ADR-05-baseline.md`; checkpoint `checkpoints/baseline/` | 300-step CPU run: 358s, loss 8.11->3.34 train / 3.95 eval; commit + tag v0.0.6 |
 
 ## Error log
 

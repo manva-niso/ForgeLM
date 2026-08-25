@@ -1,0 +1,108 @@
+"""Baseline training: standalone script (CPU local or Kaggle GPU).
+
+Usage:
+    python scripts/kaggle_baseline.py --device cpu --steps 300 --data data/tinystories_sample.jsonl
+    python scripts/kaggle_baseline.py --device cuda --steps 4000 --data stream --hf-repo forge-lm/baseline
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import time
+from pathlib import Path
+
+import torch
+
+from forger.model.config import GPTConfig
+from forger.model.gpt import GPT
+from forger.tokenizer.bpe import BPETokenizer
+from forger.train.config import TrainConfig
+from forger.train.dataset import WindowDataset
+from forger.train.trainer import Trainer
+
+
+def load_texts(data: str, max_stories: int | None) -> list[str]:
+    if data == "stream":
+        from datasets import load_dataset
+
+        ds = load_dataset("roneneldan/TinyStories", split="train", streaming=True)
+        texts = [ex["text"] for ex in ds.take(max_stories or 50_000)]
+        return texts
+    texts = []
+    with Path(data).open("r", encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if not line:
+                continue
+            texts.append(json.loads(line)["text"])
+            if max_stories is not None and len(texts) >= max_stories:
+                break
+    return texts
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(prog="kaggle-baseline")
+    parser.add_argument("--device", default="cpu", choices=["cpu", "cuda"])
+    parser.add_argument("--steps", type=int, default=4000)
+    parser.add_argument("--batch-size", type=int, default=8)
+    parser.add_argument("--context-length", type=int, default=256)
+    parser.add_argument("--data", default="data/tinystories_sample.jsonl", help="jsonl path or 'stream' for full TinyStories")
+    parser.add_argument("--max-stories", type=int, default=None)
+    parser.add_argument("--tokenizer", default="artifacts/tokenizer")
+    parser.add_argument("--ckpt-dir", default="checkpoints/baseline")
+    parser.add_argument("--run-name", default="baseline")
+    parser.add_argument("--hf-repo", default=None, help="HF repo id to push checkpoint (needs HF_TOKEN)")
+    args = parser.parse_args(argv)
+
+    t0 = time.monotonic()
+    tokenizer = BPETokenizer.load(args.tokenizer)
+    texts = load_texts(args.data, args.max_stories)
+    print(f"loaded {len(texts)} stories in {time.monotonic() - t0:.0f}s")
+    encoded = [tokenizer.encode(t) for t in texts]
+    split = int(len(encoded) * 0.95)
+    train_data = WindowDataset(texts[:split], tokenizer, args.context_length, encoded_ids=encoded[:split])
+    eval_data = WindowDataset(texts[split:], tokenizer, args.context_length, encoded_ids=encoded[split:])
+    train_data.shuffle(0)
+
+    model = GPT(GPTConfig(vocab_size=len(tokenizer.token_bytes), context_length=args.context_length))
+    config = TrainConfig(
+        steps=args.steps,
+        batch_size=args.batch_size,
+        context_length=args.context_length,
+        lr=3e-4,
+        weight_decay=0.1,
+        warmup_steps=min(100, max(1, args.steps // 40)),
+        grad_accum=1,
+        eval_every=max(25, args.steps // 16),
+        eval_windows=20,
+        log_every=max(10, args.steps // 40),
+        device=args.device,
+        seed=0,
+        checkpoint_dir=args.ckpt_dir,
+        run_name=args.run_name,
+    )
+    if args.device == "cuda" and not torch.cuda.is_available():
+        print("cuda requested but unavailable; falling back to cpu")
+        config.device = "cpu"
+
+    trainer = Trainer(model, config, train_data, eval_data)
+    start = time.monotonic()
+    trainer.train()
+    elapsed = time.monotonic() - start
+    trainer.save()
+    print(f"done: {config.steps} steps in {elapsed:.0f}s ({config.steps / elapsed:.2f} step/s)")
+    print(f"final loss: {trainer.loss_history[-1]:.4f}")
+
+    if args.hf_repo:
+        from huggingface_hub import HfApi
+
+        api = HfApi()
+        api.create_repo(args.hf_repo, exist_ok=True, private=True)
+        api.upload_folder(folder_path=args.ckpt_dir, repo_id=args.hf_repo, repo_type="model")
+        print(f"pushed checkpoint to hf.co/{args.hf_repo}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
