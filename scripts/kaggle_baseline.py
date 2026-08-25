@@ -99,7 +99,13 @@ def main(argv: list[str] | None = None) -> int:
     tokenizer = BPETokenizer.load(args.tokenizer)
     texts = load_texts(args.data, args.max_stories)
     print(f"loaded {len(texts)} stories in {time.monotonic() - t0:.0f}s")
-    encoded = [tokenizer.encode(t) for t in texts]
+    t1 = time.monotonic()
+    encoded: list[list[int]] = []
+    for i, text in enumerate(texts):
+        encoded.append(tokenizer.encode(text))
+        if (i + 1) % 2000 == 0:
+            print(f"encoded {i + 1}/{len(texts)} stories ({time.monotonic() - t1:.0f}s)", flush=True)
+    print(f"encoded {len(texts)} stories in {time.monotonic() - t1:.0f}s", flush=True)
     split = int(len(encoded) * 0.95)
     train_data = WindowDataset(
         texts[:split], tokenizer, config.context_length,
