@@ -9,8 +9,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 import time
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import torch
 
@@ -48,7 +51,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--context-length", type=int, default=256)
     parser.add_argument("--data", default="data/tinystories_sample.jsonl", help="jsonl path or 'stream' for full TinyStories")
-    parser.add_argument("--max-stories", type=int, default=None)
+    parser.add_argument("--max-stories", type=int, default=2000, help="cap stories (encode is ~0.17s/story on CPU)")
     parser.add_argument("--tokenizer", default="artifacts/tokenizer")
     parser.add_argument("--ckpt-dir", default="checkpoints/baseline")
     parser.add_argument("--run-name", default="baseline")

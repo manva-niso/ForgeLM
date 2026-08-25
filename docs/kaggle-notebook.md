@@ -62,10 +62,7 @@ model = GPT(GPTConfig(vocab_size=len(tok.token_bytes), context_length=256))
 
 ```python
 # Cell 3 - train + save (checkpoint incl. train_log.json / eval_log.json)
-trainer = Trainer(model, cfg, train_data, eval_data)
-trainer.train()
-trainer.save()
-print("train steps:", trainer.step, "final loss:", trainer.loss_history[-1])
+!python scripts/kaggle_baseline.py --device cuda --steps 4000 --batch-size 64 --context-length 256 --data stream --max-stories 2000 --ckpt-dir /kaggle/working/ckpt --hf-repo forge-lm/baseline
 ```
 
 ```python
