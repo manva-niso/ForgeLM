@@ -48,6 +48,8 @@ class Trainer:
         self.writer = SummaryWriter(log_dir=f"runs/{config.run_name}")
         self.loss_history: list[float] = []
         self.eval_history: list[tuple[int, float]] = []
+        self.best_eval_loss = float("inf")
+        self.best_state: dict[str, torch.Tensor] | None = None
 
     def _device(self) -> torch.device:
         return torch.device(self.config.device)
@@ -114,6 +116,12 @@ class Trainer:
                 self.eval_history.append((step + 1, eval_loss))
                 self.writer.add_scalar("eval/loss", eval_loss, step)
                 print(f"step {step + 1} eval loss {eval_loss:.4f}")
+                if eval_loss < self.best_eval_loss:
+                    self.best_eval_loss = eval_loss
+                    self.best_state = {
+                        k: v.detach().clone() for k, v in self.model.state_dict().items()
+                    }
+                    print(f"step {step + 1} NEW BEST eval loss {eval_loss:.4f}")
                 if len(self.eval_history) >= 3 and all(
                     e < eval_loss for _, e in self.eval_history[-3:]
                 ):
@@ -136,6 +144,9 @@ class Trainer:
             },
             out / "checkpoint.pt",
         )
+        if self.best_state is not None:
+            torch.save(self.best_state, out / "best_model.pt")
+            (out / "best_eval.json").write_text(json.dumps(self.best_eval_loss), encoding="utf-8")
         (out / "train_log.json").write_text(json.dumps(self.loss_history), encoding="utf-8")
         (out / "eval_log.json").write_text(json.dumps(self.eval_history), encoding="utf-8")
         return out

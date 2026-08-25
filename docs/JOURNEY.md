@@ -207,8 +207,22 @@ merge loop rebuilding dictionaries on every pass (22.6M dict lookups for three
 encodes). Rewrote it as a single-pass rank scan with a piece cache:
 **37.3s → 1.8s (20× faster), parity still 10/10.** That makes large corpora
 affordable: 20,000 stories now encode in ~8 minutes instead of ~2.5 hours.
-The Kaggle run now uses 20,000 stories (~2.6M unique tokens) — beyond the
-5.25M model's memorization range even at 4,000 steps.
+
+**And then the fifth Kaggle run still memorized — this time the real root
+cause surfaced.** The run printed `train windows: 378` — two stacked bugs:
+
+1. `n = min(windows_per_story, len//ctx)` silently capped the number of crops
+   per story at 1 for any story shorter than 2× the context. The 16-window
+   multiplier never actually fired.
+2. Context 256 discards every story under 257 tokens — **91% of TinyStories**
+   (average story ≈ 150 tokens). Only 378 of 1900 stories even qualified.
+
+Fixes: the window count is now unconditional (16 crops per qualifying story),
+the Kaggle config drops to **context 128** (97% of stories qualify — 6,176
+windows vs 386 for the same data), and the Trainer now keeps a
+**best-eval checkpoint** (`best_model.pt`) so late-training overfitting can
+never destroy the best model. Validation run: eval loss **decreasing**
+4.63 → 4.58 with NEW BEST prints, train 3.22 healthy.
 
 Other changes that stayed useful: `windows_per_story` as a config knob
 (16/4), and the Trainer's eval-rise warning.

@@ -1,6 +1,6 @@
 steps: 4000
 batch_size: 64
-context_length: 256
+context_length: 128
 lr: 3.0e-4
 weight_decay: 0.1
 warmup_steps: 100

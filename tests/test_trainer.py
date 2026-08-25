@@ -50,6 +50,12 @@ def test_dataset_rejects_short_corpus():
         WindowDataset(["hi"], TOKENIZER, 32)
 
 
+def test_windows_per_story_not_capped_by_len():
+    ds = WindowDataset(CORPUS[:10], TOKENIZER, 32, windows_per_story=8)
+    qualifying = sum(1 for t in CORPUS[:10] if len(TOKENIZER.encode(t)) >= 33)
+    assert len(ds.windows) == qualifying * 8
+
+
 def test_lr_schedule():
     cfg = TrainConfig(steps=100, warmup_steps=10)
     assert lr_at_step(0, cfg) < cfg.lr
