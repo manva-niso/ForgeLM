@@ -34,6 +34,8 @@ Append after every significant work session. Do not rewrite old entries.
 | 2026-08-22 | Kaggle run 1 failed | `ModuleNotFoundError: forger` - `python scripts/x.py` puts `scripts/` on sys.path, package not installed on Kaggle | `sys.path.insert` repo root in `scripts/kaggle_baseline.py`; also capped max-stories 2000 (encode ~0.17s/story -> 50k stories would take ~2.4h) |
 | 2026-08-22 | Kaggle run 2 failed (same error) | stale `/kaggle/working/forge-lm` from run 1 - `git clone` fails silently, old script ran | notebook wipes dir before re-clone + `import forger` check |
 | 2026-08-22 | Kaggle run 3 failed | `index on cuda:0, weights on cpu` - Trainer never moved model to config.device | `model.to(device)` in `Trainer.__init__` + device regression test |
+| 2026-08-22 | Kaggle: HF still unauthenticated despite secret | `UserSecretsClient().get_secret()` returns a value but does NOT export env; `!python` subprocess never sees HF_TOKEN | notebook sets `os.environ["HF_TOKEN"] = ...get_secret(...)` before training |
+| 2026-08-22 | Local vs Kaggle mismatch | same code, different config/notebook intents | branch `kaggle` (configs/train/kaggle.yaml + Kaggle-edition notebook pinning the branch); `main` stays local; merge main -> kaggle after each change |
 
 ## Error log
 
