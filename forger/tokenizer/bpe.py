@@ -73,6 +73,7 @@ class BPETokenizer:
         self.byte_to_id = byte_to_id
         self.merges_ranked = sorted(merges.items(), key=lambda kv: kv[1])
         self._ranks = {pair: rank for pair, rank in merges.items()}
+        self._piece_cache: dict[tuple[int, ...], tuple[int, ...]] = {}
 
     @classmethod
     def train(cls, texts: list[str], vocab_size: int, max_chars: int | None = None, verbose: bool = False) -> BPETokenizer:
@@ -144,14 +145,42 @@ class BPETokenizer:
         return self._bpe(piece_ids)
 
     def _bpe(self, ids: list[int]) -> list[int]:
+        key = tuple(ids)
+        cached = self._piece_cache.get(key)
+        if cached is not None:
+            return list(cached)
         ranks = self._ranks
-        while len(ids) > 1:
-            stats = count_pairs(ids)
-            best_pair = min(stats, key=lambda p: ranks.get(p, 10**9))
-            if best_pair not in ranks:
+        out = ids
+        while True:
+            best_pair = None
+            best_rank = 10**9
+            prev = out[0]
+            for cur in out[1:]:
+                rank = ranks.get((prev, cur))
+                if rank is not None and rank < best_rank:
+                    best_rank = rank
+                    best_pair = (prev, cur)
+                prev = cur
+            if best_pair is None:
                 break
-            ids = merge_ids(ids, best_pair, ranks[best_pair])
-        return ids
+            merged = ranks[best_pair]
+            new = []
+            append = new.append
+            a, b = best_pair
+            i = 0
+            n = len(out)
+            while i < n:
+                if i + 1 < n and out[i] == a and out[i + 1] == b:
+                    append(merged)
+                    i += 2
+                else:
+                    append(out[i])
+                    i += 1
+            out = new
+        result = tuple(out)
+        if len(self._piece_cache) < 100_000:
+            self._piece_cache[key] = result
+        return list(result)
 
     def decode(self, ids: list[int]) -> str:
         raw = bytearray()

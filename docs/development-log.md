@@ -37,7 +37,8 @@ Append after every significant work session. Do not rewrite old entries.
 | 2026-08-22 | Kaggle: HF still unauthenticated despite secret | `UserSecretsClient().get_secret()` returns a value but does NOT export env; `!python` subprocess never sees HF_TOKEN | notebook sets `os.environ["HF_TOKEN"] = ...get_secret(...)` before training |
 | 2026-08-22 | Local vs Kaggle mismatch | same code, different config/notebook intents | branch `kaggle` (configs/train/kaggle.yaml + Kaggle-edition notebook pinning the branch); `main` stays local; merge main -> kaggle after each change |
 | 2026-08-22 | Kaggle run 4: train loss -> 0.01, eval loss rising 5.1 -> 7.7 | catastrophic memorization: 2000 stories x 1 window = 2K unique windows cycled ~128x over 4000 steps (bs 64); 5.25M model memorizes 512K tokens | `windows_per_story_train: 16` (-> ~32K unique windows, ~8M tokens, ~8 epochs) + `windows_per_story_eval: 4`; eval-rise warning in Trainer; kaggle.yaml carries the numbers |
-| 2026-08-22 | A/B evidence runs (CPU, ctx 128, bs 8) | see benchmarks/baseline_train.md table: 50 stories collapses both at 1 and 16 windows (0.14/7.46 and 0.15/7.84); 400 stories healthy both (2.71/4.92 and 2.80/4.89) | proof that unique-data volume is the lever; 16 windows = 16x data at zero encode cost |
+| 2026-08-22 | A/B evidence runs (CPU, ctx 128, bs 8) | see benchmarks/baseline_train.md table: 50 stories collapses both at 1 and 16 windows (0.14/7.46 and 0.15/7.84); 400 stories both "not yet collapsed" at 600 steps | CORRECTION: 16 windows does NOT add unique data (same-story crops overlap); unique data = stories x tokens; B at 1200 steps eval 5.09->5.66 proves memorization returns |
+| 2026-08-22 | encode 37.3s/20 stories bottleneck | `_bpe` rebuilt pair dicts + min(lambda) every merge pass (22.6M dict gets / 3 encodes) | single-pass rank scan + per-tokenizer piece cache: 20x faster (1.8s), parity still 10/10; Kaggle plan -> 20000 stories |
 
 ## Error log
 

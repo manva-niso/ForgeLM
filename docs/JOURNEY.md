@@ -188,25 +188,30 @@ cross-entropy rises.
 
 **How we proved it (A/B experiments on CPU):**
 
-| Setup | train loss | eval loss | verdict |
+| Setup | final train loss | final eval loss | verdict |
 |---|---|---|---|
 | 50 stories, 1 window/story, 400 steps | 0.14 | 7.46 | memorized |
-| 50 stories, 16 windows/story, 400 steps | 0.15 | 7.84 | still memorized (data too small either way) |
-| 400 stories, 1 window/story, 600 steps | 2.71 | 4.92 | healthy |
-| 400 stories, 16 windows/story, 600 steps | 2.80 | 4.89 | healthy |
+| 50 stories, 16 windows/story, 400 steps | 0.15 | 7.84 | still memorized |
+| 400 stories, 1 window/story, 600 steps | 2.71 | 4.92 | not yet collapsed |
+| 400 stories, 16 windows/story, 600 steps | 2.80 | 4.89 | not yet collapsed |
+| 400 stories, 16 windows/story, 1200 steps | ~2.5 | 5.09 -> 5.66 | **memorization creeping back** |
 
-The pattern is clear: collapse happens when **unique data is small and gets
-repeated hundreds of times**. Both 400-story runs are healthy — and the
-16-window run packs ~16× more unique data per encode cost.
+**Correction (learned the hard way):** the "16× unique data" idea was wrong.
+Windows cropped from the *same* story overlap almost completely — 400 stories
+contain only ~52K unique tokens whether you take 1 window or 16. The window
+multiplier only adds redundant views. The real lever for unique data is
+**the number of stories**, and that was gated by encoder speed.
 
-**The fix (architecture change):**
-- `windows_per_story` became a real configuration knob (default 16 for
-  training, 4 for eval) — 2,000 stories now yield ~32,000 unique windows
-  (~8M unique tokens), and 4,000 steps cycle them only ~8 times. That is
-  beyond memorization range.
-- The Trainer now prints a **warning** if eval loss rises 3 evaluations in a
-  row ("possible memorization"), so this never sneaks up silently again.
-- The Kaggle config (`configs/train/kaggle.yaml`) encodes these numbers.
+**The fix that actually matters:** we profiled the encoder and found the
+merge loop rebuilding dictionaries on every pass (22.6M dict lookups for three
+encodes). Rewrote it as a single-pass rank scan with a piece cache:
+**37.3s → 1.8s (20× faster), parity still 10/10.** That makes large corpora
+affordable: 20,000 stories now encode in ~8 minutes instead of ~2.5 hours.
+The Kaggle run now uses 20,000 stories (~2.6M unique tokens) — beyond the
+5.25M model's memorization range even at 4,000 steps.
+
+Other changes that stayed useful: `windows_per_story` as a config knob
+(16/4), and the Trainer's eval-rise warning.
 
 **Hyperparameters that changed during Day 5:**
 - `windows_per_story_train`: 1 → **16** (unique data volume)

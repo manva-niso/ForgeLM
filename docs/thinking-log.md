@@ -122,6 +122,15 @@ Append per work session; do not rewrite old entries.
 - **The warning beats the postmortem:** eval-rise detection in the Trainer
   means this class of failure announces itself at step ~500, not after a
   45-minute run.
+- **Second correction (2026-08-22):** the "16x unique data" claim was wrong -
+  windows from the same story overlap ~completely (130-token story cropped
+  into 16x128 windows = 16 near-identical views). Unique data = stories x
+  tokens, not windows x tokens. B at 1200 steps showed eval rising 5.09->
+  5.66, proving memorization still wins at 400 stories. The REAL lever is
+  story count, gated by encoder speed. Profiling showed the _bpe loop
+  rebuilding dicts per pass (22.6M dict gets / 3 encodes); the fix was a
+  single-pass rank scan + piece cache: 20x faster, parity unchanged. Kaggle
+  plan: 20000 stories (~2.6M unique tokens), not 2000.
 - **Kaggle debugging taxonomy:** the 5 failures were (1) import-path
   semantics, (2) state leaking between runs (stale clone), (3) device
   placement, (4) secret env semantics (get_secret != export), (5) filesystem
