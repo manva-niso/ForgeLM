@@ -243,7 +243,7 @@ Other changes that stayed useful: `windows_per_story` as a config knob
   int8), then LoRA/QLoRA, serving, API, and release.
 - **The Kaggle run to do:** re-run the notebook (it now uses 16 windows/story
   and the kaggle branch) → checkpoint lands on HuggingFace Hub
-  (`forge-lm/baseline`) → we pull it back and measure it properly.
+  (`Manvaniso/forgelm`) → we pull it back and measure it properly.
 
 ## 10. The Rules We Learned (short version)
 

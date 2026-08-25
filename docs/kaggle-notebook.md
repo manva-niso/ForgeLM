@@ -62,16 +62,16 @@ model = GPT(GPTConfig(vocab_size=len(tok.token_bytes), context_length=256))
 
 ```python
 # Cell 3 - train + save (checkpoint incl. train_log.json / eval_log.json)
-!python scripts/kaggle_baseline.py --config configs/train/kaggle.yaml --data stream --max-stories 20000 --ckpt-dir /kaggle/working/ckpt --hf-repo forge-lm/baseline
+!python scripts/kaggle_baseline.py --config configs/train/kaggle.yaml --data stream --max-stories 20000 --ckpt-dir /kaggle/working/ckpt --hf-repo Manvaniso/forgelm
 ```
 
 ```python
 # Cell 4 - push checkpoint to HF Hub (secrets: HF_TOKEN with write scope)
 from huggingface_hub import HfApi
 api = HfApi(token=os.environ.get("HF_TOKEN"))
-api.create_repo("forge-lm/baseline", exist_ok=True, private=True)
+api.create_repo("Manvaniso/forgelm", exist_ok=True, private=True)
 api.upload_folder(folder_path="/kaggle/working/ckpt",
-                  repo_id="forge-lm/baseline",
+                  repo_id="Manvaniso/forgelm",
                   repo_type="model")
 ```
 
@@ -93,7 +93,7 @@ from TensorBoard `runs/baseline`).
 ## 4. Pulling artifacts back locally
 ```powershell
 # from V:\Projects\AIML\Project_1
-uv run python scripts/download_from_hub.py --repo forge-lm/baseline --out checkpoints/   # script TBD
+uv run python scripts/download_from_hub.py --repo Manvaniso/forgelm --out checkpoints/   # script TBD
 ```
 
 ## Gotchas learned
