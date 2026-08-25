@@ -59,6 +59,8 @@ cat. One day, Tom saw a big cat in the park. The cat wanted to play with the cat
 Tom said, 'I want to play with the cat. It is fun.'"
 
 Coherent multi-sentence story with names and dialogue. Baseline DONE.
+Weights committed to the repo at `models/forgelm-baseline/` (24.3 MB) - no
+HF account required to use the model; HF Hub remains the Kaggle transport.
 - Notebook: `scripts/kaggle_baseline.ipynb` (import into Kaggle, GPU T4 x2)
 - Script: `scripts/kaggle_baseline.py --device cuda --steps 4000 --batch-size 64 --context-length 256 --data stream --max-stories 50000 --hf-repo Manvaniso/forgelm`
 - Expected: 4k steps on full TinyStories stream; checkpoint pushed to HF Hub

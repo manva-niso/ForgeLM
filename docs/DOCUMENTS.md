@@ -60,6 +60,13 @@
 | `download_from_hub.py` | Pull checkpoint from HF Hub |
 | `smoke_infer.py` | Greedy generation from a checkpoint |
 
+## models/
+| File | Contents |
+|---|---|
+| `forgelm-baseline/model.pt` | **Committed weights** (24.3 MB, best eval 2.0247) — no HF account needed |
+| `forgelm-baseline/config.json` | GPTConfig matching the weights |
+| `forgelm-baseline/README.md` | Weights record (source run, eval, usage) |
+
 ## forger/ — the code
 `data` (contract) · `tokenizer` (BPE) · `model` (GPT) · `train` (pipeline) —
 each with `__init__.py`; tests live in `tests/`.
