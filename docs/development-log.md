@@ -50,3 +50,4 @@ Append after every significant work session. Do not rewrite old entries.
 - Every bug gets a row here: symptom, root cause, fix path.
 - Every shipped module gets a row in `docs/modules.md` + one line in `docs/changelog.md`.
 - Benchmark/evidence files land in `benchmarks/`.
+- Design reasoning (alternatives + why) goes to `docs/thinking-log.md`.
