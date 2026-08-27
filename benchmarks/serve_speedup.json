@@ -1,0 +1,24 @@
+{
+ "fp32": {
+  "prefill_ms": 21.333333337679505,
+  "prompt_tokens_per_sec": 2765.624999436568,
+  "first_token_ms": 10.000000009313226,
+  "decode_loop_ms": 406.3333333275902,
+  "per_token_ms": 8.126666666551804,
+  "tokens_per_sec": 123.05168170805588,
+  "size_mb": 20.0244140625
+ },
+ "int8": {
+  "prefill_ms": 20.333333309584606,
+  "prompt_tokens_per_sec": 2901.639347651323,
+  "first_token_ms": 15.666666654093813,
+  "decode_loop_ms": 495.0000000341485,
+  "per_token_ms": 9.90000000068297,
+  "tokens_per_sec": 101.01010100313265,
+  "size_mb": 4.0087890625
+ },
+ "compile": {
+  "status": "failed: InvalidCxxCompiler: Compiler: cl is not found.\n\nSet TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS=\"+dynamo\"\n",
+  "size_mb": 20.0244140625
+ }
+}
