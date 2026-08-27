@@ -110,6 +110,38 @@ discards 91% of TinyStories · HF repo must be under YOUR username.
 **Ship:** `benchmarks/baseline_train.md` (eval 2.0247), ADR-05, scripts
 (kaggle_baseline, smoke_infer, download_from_hub), tag v0.1.0.
 
+## Day 6 — Evaluation Harness (done 2026-08-22, tag v0.2.0)
+
+**Read:**
+- Eleuther lm-evaluation-harness structure: https://github.com/EleutherAI/lm-evaluation-harness
+- Perplexity math: https://huggingface.co/docs/transformers/perplexity
+- Distinct-n / diversity metrics: https://aclanthology.org/P16-1162/ (Li et al. 2016)
+
+**Understand:** sliding-window ppl (stride < ctx, count fresh tokens only) ·
+bits-per-byte (NLL / ln2 × bytes) · why eval data must be PINNED (checksummed),
+not re-streamed · reproducibility block in reports · top-k/temperature sampling
+semantics · distinct-n as diversity, repetition rate as degeneracy.
+
+**Ship:** ppl+bpb on pinned 500-story corpus (8.449 / 1.0366), 5-prompt
+generation table + metrics, ADR-06, tag v0.2.0.
+
+## Day 7 — Inference Engine (done 2026-08-22, tag v0.2.1)
+
+**Read:**
+- FlashAttention recap (Milakov/Gimelshein): https://arxiv.org/abs/2205.14135
+- torch.compile: https://pytorch.org/docs/stable/generated/torch.compile.html
+- KV-cache: https://pharath.github.io/posts/nanoGPT/
+- Dynamic int8: https://pytorch.org/docs/stable/quantization.html
+
+**Understand:** prefill vs decode phases · why cache makes decode O(1)-ish per
+token · torch.compile needs a C++ compiler on Windows (Inductor) · dynamic int8
+shrinks weights 4x but kernel overhead can beat the gain on small matrices ·
+measure protocol: fixed prompt, first-token vs per-token vs prefill tok/s.
+
+**Ship:** Engine (≡ reference greedy, context-limit safe), int8 4MB variant,
+`benchmarks/serve_speedup.md` (fp32 123 tok/s, first-token 10ms), ADR-07,
+tag v0.2.1.
+
 ---
 
 ## Upcoming (append as we go)
