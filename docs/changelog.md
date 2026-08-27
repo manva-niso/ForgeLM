@@ -13,3 +13,4 @@ Append one line per significant change - do not rewrite this file, only append.
 - 2026-08-22 d5e: Kaggle run 2b healthy - 20K stories, 293K train windows, eval 3.42->2.08 all NEW BEST, no memorization; trainer saves model.pt+config.json for GPT.load; scripts/smoke_infer.py (model speaks coherent TinyStories). Tag v0.0.10.
 - 2026-08-22 d5f: baseline COMPLETE - HF repo Manvaniso/forgelm, final eval 2.0247, fluent generations, checkpoint pulled locally. Tag v0.1.0.
 - 2026-08-22 d5g: weights committed to repo (models/forgelm-baseline/, 24.3MB) - 3rd-party usable with no HF account; README usage section. Tag v0.1.1.
+- 2026-08-22 d6: evaluation harness - sliding-window ppl + bpb, generation (greedy/top-k/temp), distinct-n/repetition metrics, pinned 500-story eval corpus, eval_report.md (ppl 8.45, bpb 1.04); context-overflow bug fixed. Tag v0.2.0.

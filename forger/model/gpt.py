@@ -31,6 +31,12 @@ class GPT(nn.Module):
             raise ValueError(
                 f"sequence length {T} exceeds context_length {self.config.context_length}"
             )
+        if cache:
+            cached_len = cache[0][0].size(2)
+            if cached_len + T > self.config.context_length:
+                raise ValueError(
+                    f"cached {cached_len} + new {T} exceeds context_length {self.config.context_length}"
+                )
         x = self.token_embedding(idx)
         new_cache: dict[int, tuple[torch.Tensor, torch.Tensor]] = {}
         for i, block in enumerate(self.blocks):
