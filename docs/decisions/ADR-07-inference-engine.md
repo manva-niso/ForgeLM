@@ -1,7 +1,7 @@
-# ADR-07: Inference Engine
+﻿# ADR-07: Inference Engine
 
 Status: accepted
-Date: 2026-08-22
+Date: 2026-08-29
 
 ## Context
 Day 7 requires a fast, correct generation engine + optimization variants.

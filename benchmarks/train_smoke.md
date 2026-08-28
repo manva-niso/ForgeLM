@@ -1,4 +1,4 @@
-# Benchmark: Training Smoke - Day 4 (2026-08-22)
+﻿# Benchmark: Training Smoke - Day 4 (2026-08-29)
 
 ## Setup
 - Model: GPTConfig(vocab 4096, d 256, 4 heads, 4 layers, ctx 256) - 5.25M params

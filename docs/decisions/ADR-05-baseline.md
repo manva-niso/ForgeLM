@@ -1,7 +1,7 @@
-# ADR-05: Baseline Training
+﻿# ADR-05: Baseline Training
 
 Status: accepted
-Date: 2026-08-22
+Date: 2026-08-29
 
 ## Context
 Day 5: produce the first real checkpoint (baseline GPT on TinyStories) with

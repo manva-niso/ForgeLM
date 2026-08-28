@@ -1,7 +1,7 @@
-# ADR-08: LoRA SFT
+﻿# ADR-08: LoRA SFT
 
 Status: accepted
-Date: 2026-08-22
+Date: 2026-08-29
 
 ## Context
 Day 8: specialize the baseline with supervised fine-tuning while keeping the

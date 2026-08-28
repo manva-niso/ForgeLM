@@ -1,6 +1,6 @@
-# Evaluation Report
+﻿# Evaluation Report
 
-date: 2026-08-22 | ckpt: `models/forgelm-baseline` | tasks: perplexity, generation
+date: 2026-08-29 | ckpt: `models/forgelm-baseline` | tasks: perplexity, generation
 
 ## Reproducibility
 - torch: 2.13.0+cpu

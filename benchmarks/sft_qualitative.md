@@ -1,4 +1,4 @@
-# Benchmark: LoRA SFT — Final (2026-08-22, tag v0.3.2)
+﻿# Benchmark: LoRA SFT — Final (2026-08-29, tag v0.3.2)
 
 ## The dolly experiment (important lesson, artifact rejected)
 - SFT on databricks-dolly-15k (15K rows, 3000 steps T4) produced a model with
