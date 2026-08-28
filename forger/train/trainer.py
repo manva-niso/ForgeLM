@@ -38,7 +38,8 @@ class Trainer:
         torch.manual_seed(config.seed)
         self.model.to(self._device())
         self.optimizer = torch.optim.AdamW(
-            model.parameters(), lr=config.lr, weight_decay=config.weight_decay, betas=(0.9, 0.95)
+            (p for p in model.parameters() if p.requires_grad),
+            lr=config.lr, weight_decay=config.weight_decay, betas=(0.9, 0.95),
         )
         self.step = 0
         self.scaler = None
