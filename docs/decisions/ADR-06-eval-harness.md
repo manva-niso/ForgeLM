@@ -1,7 +1,7 @@
-# ADR-06: Evaluation Harness
+﻿# ADR-06: Evaluation Harness
 
 Status: accepted
-Date: 2026-08-22
+Date: 2026-08-29
 
 ## Context
 Day 6 requires measuring the baseline properly (not just training eval loss).

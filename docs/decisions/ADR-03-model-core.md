@@ -1,7 +1,7 @@
-# ADR-03: Model Core
+﻿# ADR-03: Model Core
 
 Status: accepted
-Date: 2026-08-22
+Date: 2026-08-29
 
 ## Context
 Day 3 requires the GPT core: a small causal LM to be trained from Day 4 onward.

@@ -1,7 +1,7 @@
-# ADR-09: QLoRA int4 Quantization
+﻿# ADR-09: QLoRA int4 Quantization
 
 Status: accepted
-Date: 2026-08-22
+Date: 2026-08-29
 
 ## Context
 Day 9: shrink the model to <=8MB (product spec) and enable 4-bit fine-tuning.
