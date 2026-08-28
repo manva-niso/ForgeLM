@@ -1,4 +1,4 @@
-﻿# Benchmark: Model Forward - Day 3 (2026-08-29)
+﻿# Benchmark: Model Forward - Day 3 (2026-08-23)
 
 ## Setup
 - Config: {'vocab_size': 4096, 'd_model': 256, 'n_heads': 4, 'n_layers': 4, 'context_length': 512, 'ffn_mult': 4}

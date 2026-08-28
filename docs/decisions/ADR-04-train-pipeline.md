@@ -1,7 +1,7 @@
 ﻿# ADR-04: Training Pipeline
 
 Status: accepted
-Date: 2026-08-29
+Date: 2026-08-24
 
 ## Context
 Day 4 requires the training loop that will run the baseline (Day 5, Kaggle T4).

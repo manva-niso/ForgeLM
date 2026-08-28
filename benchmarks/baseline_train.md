@@ -1,4 +1,4 @@
-﻿# Benchmark: Baseline Training - Day 5 (2026-08-29)
+﻿# Benchmark: Baseline Training - Day 5 (2026-08-25)
 
 ## Run 1 - local CPU (evidence, checkpoint produced)
 | Item | Value |
@@ -42,7 +42,7 @@ crops at 1 for stories < 2x ctx, and ctx 256 discarded 91% of TinyStories
 context 128 (97% qualify; 6176 vs 386 windows for 400 stories) + best-eval
 checkpoint. Validation: eval DECREASING 4.63 -> 4.58, train 3.22.
 
-## Run 2b - Kaggle T4 (COMPLETE - 2026-08-29)
+## Run 2b - Kaggle T4 (COMPLETE - 2026-08-25)
 | Item | Value |
 |---|---|
 | Data | 20,000 TinyStories stories (stream), encode 529s |
