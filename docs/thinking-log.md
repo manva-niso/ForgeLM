@@ -136,3 +136,34 @@ Append per work session; do not rewrite old entries.
   placement, (4) secret env semantics (get_secret != export), (5) filesystem
   cwd lifetime. Each is a known "works locally, breaks in cloud notebooks"
   class - worth a checklist in docs/kaggle-notebook.md. |
+
+## Day 8 - LoRA SFT (2026-08-22)
+
+- **Why LoRA over full fine-tuning:** 5.25M params is small, but the *lesson*
+  and the *pattern* (freeze base, adapters, merge) is what carries over to
+  real models. Also keeps the artifact a plain GPT (merge+convert), which the
+  rest of the pipeline (eval, engine, int4) consumes unchanged.
+- **LoRA target set = all projections except the tied head:** c_attn/c_proj/
+  gate/up/down. The embedding/head stays fp32 and tied - LoRA there would
+  break the tie semantics for no benefit.
+- **Freeze contract:** apply_lora freezes EVERYTHING (incl. RMSNorms) except
+  A/B - the classic LoRA setup. Trainer now optimizes only requires_grad
+  params, so the same Trainer runs pretraining, SFT, and QLoRA unchanged.
+- **SFT is just next-token loss on formatted text:** reusing WindowDataset +
+  Trainer (vs a bespoke chat-loss loop) was the right call - one code path,
+  everything else (resume, eval, TensorBoard) inherited.
+
+## Day 9 - QLoRA int4 (2026-08-22)
+
+- **Symmetric block int4 over NF4:** NF4's normal-float codebook buys maybe
+  1% ppl over absmax int4; implementing it correctly is a day on its own.
+  Measured int4 costs +2.9% ppl for 5x size - acceptable, and NF4 is
+  documented as a refinement, not a rewrite.
+- **QLoRA-in-spirit, honestly documented:** we store base as int4 but
+  dequantize for forward (no on-the-fly int4 matmul kernels). At 5.25M params
+  memory is irrelevant - the paper's machinery exists for >1B models. What we
+  kept is the *contract*: quantized frozen base + fp32 adapters + int4 export.
+- **The ppl-734K debugging session:** the toy test passed while the real
+  model was broken (fresh-GPT RNG state masked the missing RMSNorm restore).
+  Lesson: roundtrip tests on toy models can pass for the WRONG reason -
+  always re-measure the real artifact (ppl delta) after loading.
