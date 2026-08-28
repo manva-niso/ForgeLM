@@ -19,7 +19,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import torch
 
 from forger.ft.lora import LoRAConfig, apply_lora, convert_merged, count_lora_params, merge_lora
-from forger.ft.sft_data import load_dolly
+from forger.ft.story_sft_data import format_story_instruction
 from forger.model.checkpoint import load_model_from_checkpoint
 from forger.quant.quantize import export_4bit, quantize_model_4bit, storage_size_mb
 from forger.tokenizer.bpe import BPETokenizer
@@ -28,6 +28,20 @@ from forger.train.dataset import WindowDataset
 from forger.train.trainer import Trainer
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+
+def load_story_stream(examples: int) -> list[str]:
+    from datasets import load_dataset
+
+    ds = load_dataset("roneneldan/TinyStories", split="train", streaming=True)
+    texts = []
+    for i, ex in enumerate(ds):
+        text = format_story_instruction(ex["text"], i)
+        texts.append(text)
+        if len(texts) >= examples:
+            break
+    print(f"story-sft: loaded {len(texts)} streamed examples")
+    return texts
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -54,7 +68,7 @@ def main(argv: list[str] | None = None) -> int:
         print("cuda unavailable; falling back to cpu")
         args.device = "cpu"
 
-    texts = load_dolly(args.examples)
+    texts = load_story_stream(args.examples)
     split = int(len(texts) * 0.95)
     t1 = time.monotonic()
     encoded: list[list[int]] = []
