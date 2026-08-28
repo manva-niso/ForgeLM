@@ -19,7 +19,7 @@ Append per work session; do not rewrite old entries.
 - **max_length = 4096 (not 2048):** stories sometimes run long; generous enough
   for TinyStories, still small enough to catch genuinely broken rows.
 
-## Day 2 - BPE tokenizer (2026-08-29)
+## Day 2 - BPE tokenizer (2026-08-22)
 
 - **Byte-level over character-level:** character-level breaks on unknown Unicode
   and huge vocabularies; byte-level (GPT-2 style) guarantees completeness - any
@@ -53,7 +53,7 @@ Append per work session; do not rewrite old entries.
   considered.
 - Keep entries short (3-8 lines); this is a pointer doc, not a transcript.
 
-## Day 3 - Model core (2026-08-29)
+## Day 3 - Model core (2026-08-23)
 
 - **RoPE over learned absolute embeddings:** no extra params, length-generalizes
   beyond trained context, standard in modern LMs; absolute embeddings were the
@@ -74,7 +74,7 @@ Append per work session; do not rewrite old entries.
   not change" is the cleanest, most direct test of causality - catches mask
   bugs that shape tests miss.
 
-## Day 4 - Training pipeline (2026-08-29)
+## Day 4 - Training pipeline (2026-08-24)
 
 - **AMP only on CUDA, fp32 on CPU:** measured bf16 autocast 7x SLOWER on this
   CPU (1.35s vs 0.19s forward) - the "bf16 on CPU" assumption from the plan
@@ -91,7 +91,7 @@ Append per work session; do not rewrite old entries.
   separate test bugs (shared config mutation, LR-schedule mismatch, unseeded
   inits) had to be fixed before it passed - each one documented in the dev log.
 
-## Day 5 - Baseline training (2026-08-29)
+## Day 5 - Baseline training (2026-08-25)
 
 - **CPU-first baseline before Kaggle:** the vertical-slice rule wants evidence
   today, not "whenever GPU access happens". 300 steps on CPU (6 min) produced a
@@ -106,7 +106,7 @@ Append per work session; do not rewrite old entries.
 - **HF Hub as the artifact bus:** checkpoint push (Kaggle) / pull (local) via
   huggingface_hub - no zip downloads, versioned, private by default.
 
-## Day 5b - The memorization investigation (2026-08-29)
+## Day 5b - The memorization investigation (2026-08-25)
 
 - **First instinct was wrong:** I blamed "too few windows per story" and
   changed windows_per_story to 16 before proving anything. The A/B tests then
@@ -137,7 +137,7 @@ Append per work session; do not rewrite old entries.
   cwd lifetime. Each is a known "works locally, breaks in cloud notebooks"
   class - worth a checklist in docs/kaggle-notebook.md. |
 
-## Day 8 - LoRA SFT (2026-08-29)
+## Day 8 - LoRA SFT (2026-08-28)
 
 - **Why LoRA over full fine-tuning:** 5.25M params is small, but the *lesson*
   and the *pattern* (freeze base, adapters, merge) is what carries over to
@@ -167,7 +167,7 @@ Append per work session; do not rewrite old entries.
   model was broken (fresh-GPT RNG state masked the missing RMSNorm restore).
   Lesson: roundtrip tests on toy models can pass for the WRONG reason -
   always re-measure the real artifact (ppl delta) after loading.
-## Day 8b - The dolly domain lesson (2026-08-29)
+## Day 8b - The dolly domain lesson (2026-08-28)
 
 - **SFT teaches form, not facts:** a 5.25M model trained only on TinyStories
   cannot answer general-knowledge questions no matter how well you fine-tune

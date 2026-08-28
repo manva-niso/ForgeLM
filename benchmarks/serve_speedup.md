@@ -1,4 +1,4 @@
-﻿# Benchmark: Optimized Serving - Day 7 (2026-08-29)
+﻿# Benchmark: Optimized Serving - Day 7 (2026-08-27)
 
 ## Setup
 - Checkpoint: models/forgelm-baseline (best eval 2.0247)

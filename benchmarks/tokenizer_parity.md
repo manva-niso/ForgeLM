@@ -1,4 +1,4 @@
-﻿# Benchmark: Tokenizer Parity - Day 2 (2026-08-29)
+﻿# Benchmark: Tokenizer Parity - Day 2 (2026-08-22)
 
 ## Setup
 - Custom: `forger/tokenizer/bpe.py` (byte-level BPE, GPT-2 pretokenization, deterministic ties)

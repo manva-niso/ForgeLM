@@ -1,7 +1,7 @@
 ﻿# ADR-02: Tokenizer Design
 
 Status: accepted
-Date: 2026-08-29
+Date: 2026-08-22
 
 ## Context
 Day 2 requires a tokenizer built from scratch for a 4096-vocab small GPT.
