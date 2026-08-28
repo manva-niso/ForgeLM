@@ -56,7 +56,13 @@ def main(argv: list[str] | None = None) -> int:
 
     texts = load_dolly(args.examples)
     split = int(len(texts) * 0.95)
-    encoded = [tokenizer.encode(t) for t in texts]
+    t1 = time.monotonic()
+    encoded: list[list[int]] = []
+    for i, text in enumerate(texts):
+        encoded.append(tokenizer.encode(text))
+        if (i + 1) % 3000 == 0:
+            print(f"encoded {i + 1}/{len(texts)} ({time.monotonic() - t1:.0f}s)", flush=True)
+    print(f"encoded {len(texts)} stories in {time.monotonic() - t1:.0f}s", flush=True)
     train_data = WindowDataset(texts[:split], tokenizer, args.context_length, windows_per_story=8, encoded_ids=encoded[:split])
     eval_data = WindowDataset(texts[split:], tokenizer, args.context_length, windows_per_story=4, encoded_ids=encoded[split:])
     train_data.shuffle(args.seed)
