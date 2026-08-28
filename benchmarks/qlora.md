@@ -26,4 +26,8 @@ in ADR-09 as a refinement.)
 ## Files
 - `forger/quant/quantize.py` - block int4 quant/dequant, packed 2 codes/byte,
   Int4Linear, export/load.
-- `models/forgelm-4bit/` - committed int4 artifact (4.00 MB).
+- `models/forgelm-4bit/` - committed int4 artifact (6.86 MB file).
+- `models/forgelm-sft-story-4bit/` - int4 of the SHIPPED fine-tuned model
+  (6.27 MB, tag v0.3.2). The QLoRA training demo above ran on the (rejected)
+  dolly-SFT checkpoint; the shipped int4 artifact is a direct export of the
+  story-domain SFT model.

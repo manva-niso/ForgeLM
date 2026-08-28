@@ -63,9 +63,10 @@
 ## models/
 | File | Contents |
 |---|---|
-| `forgelm-baseline/model.pt` | **Committed weights** (24.3 MB, best eval 2.0247) — no HF account needed |
-| `forgelm-baseline/config.json` | GPTConfig matching the weights |
-| `forgelm-baseline/README.md` | Weights record (source run, eval, usage) |
+| `forgelm-baseline/` | Pretrained weights (24.3 MB, best eval 2.0247) |
+| `forgelm-sft-story/` | **LoRA fine-tuned** (21.3 MB fp32 + README) — instruction-following on stories |
+| `forgelm-sft-story-4bit/` | int4 export (6.27 MB, ≤8MB spec) |
+| `forgelm-4bit/` | int4 export of the baseline (6.86 MB) |
 
 ## forger/ — the code
 `data` (contract) · `tokenizer` (BPE) · `model` (GPT) · `train` (pipeline) —

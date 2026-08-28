@@ -16,10 +16,20 @@ Day 8: specialize the baseline with supervised fine-tuning while keeping the
   params.
 - `merge_lora` folds W + (alpha/r)*B@A into the base weight; `convert_merged`
   swaps LoRALinear back to plain Linear so the checkpoint loads as a normal GPT.
-- SFT data: databricks-dolly-15k (Apache-2.0 - license note), formatted
-  "### Instruction/Context/Response", contract-validated, encoded with our
-  tokenizer; WindowDataset reused (SFT = same next-token loss on formatted
-  text).
+- SFT data: **story-domain** (TinyStories formatted
+  "### Instruction: Write a story about {topic}\n### Response: {story}").
+  Initial choice (databricks-dolly-15k, Apache-2.0) was REJECTED after
+  evidence: see "Domain lesson" below. `forger/ft/story_sft_data.py` +
+  `scripts/kaggle_sft.py` (streaming mode for GPU runs).
+
+## Domain lesson (the important part)
+Dolly SFT (15K rows, 3000 T4 steps) produced a model with ppl 38 on stories
+and ppl 68 on held-out dolly, generating confident garbage. Root cause was
+NOT the pipeline (merge verified exact, zero-LoRA == baseline, deltas small):
+a 5.25M model trained only on TinyStories has no general knowledge, and dolly
+asks general-knowledge questions. SFT teaches response FORM, not FACTS.
+Fixing the data domain (story instructions over TinyStories content) made the
+same pipeline produce coherent instruction-following (loss 1.96).
 - `forger/ft/train_sft.py`: loads baseline checkpoint, applies LoRA, trains
   (device flag - CPU local, CUDA Kaggle), saves Trainer checkpoint + merged
   model.

@@ -233,7 +233,38 @@ Other changes that stayed useful: `windows_per_story` as a config knob
 - Kaggle batch size 64, context 256, steps 4000, lr 3e-4, warmup 100 — unchanged
 - CPU runs: adaptive eval interval (`steps/16`), warmup `steps/40`
 
-## 9. Where We Are Now
+## 9. Days 8-9 — Fine-tuning (LoRA, the Dolly Disaster, QLoRA)
+
+**LoRA (Day 8):** full fine-tuning rewrites all 5.25M weights; LoRA instead
+freezes the base and trains tiny low-rank adapters (r=8, alpha=16) on the
+attention + MLP projections — ~3.3% trainable params. At the end the adapter
+is folded back in (`W + (alpha/r)·B·A`), so the artifact stays a plain GPT.
+We hand-rolled it (no peft library).
+
+**The Dolly Disaster (the most instructive failure yet):** we fine-tuned on
+databricks-dolly-15k — 15K general knowledge Q&A rows, 3000 steps on a T4.
+The result: train loss nice and low, eval on stories exploding (ppl 38),
+generations = confident garbage. We verified the whole pipeline layer by
+layer (merge exact, zero-LoRA identical to baseline, adapter deltas small) —
+it was never broken. The truth: **SFT teaches form, not facts.** A 5.25M
+model trained only on TinyStories has no general knowledge, and dolly asks
+"Who is… / Explain…" questions — the model learned dolly's *shape* while
+having nothing to say. The fix was the data domain, not the code:
+**story instructions over TinyStories content** ("Write a story about a
+cat" → story). Same pipeline, loss 1.96, and the model genuinely follows
+instructions now. Lesson #1 of fine-tuning: match the data to what the base
+model actually knows.
+
+**QLoRA int4 (Day 9):** the base's weights are stored as block-wise 4-bit
+(two codes per byte, one scale per 64 weights) and frozen; adapters train in
+fp32; the result is re-exported as int4. Our model went from 20 MB (fp32) to
+**4 MB of codes** — with ppl only +2.9% worse (7.88 → 8.11). We also found
+four quantization bugs that each would have shipped silently (a 4.3 GB
+broadcast blow-up, a size-0 bias, double quantization, and RMSNorm weights
+left random — the last one hid behind a toy test that "passed" only because
+of matching random seeds).
+
+## 10. Where We Are Now
 
 - **Done (tagged v0.0.1 … v0.0.6):** data contract, tokenizer (10/10 parity),
   model core (KV-cache proven), training pipeline (bit-exact resume), baseline
@@ -245,7 +276,7 @@ Other changes that stayed useful: `windows_per_story` as a config knob
   and the kaggle branch) → checkpoint lands on HuggingFace Hub
   (`Manvaniso/forgelm`) → we pull it back and measure it properly.
 
-## 10. The Rules We Learned (short version)
+## 11. The Rules We Learned (short version)
 
 1. Measure before trusting a convention (bf16 "should" be faster — it wasn't).
 2. The data bends to the contract, not the other way.
