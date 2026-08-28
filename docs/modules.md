@@ -9,5 +9,5 @@
 | eval (harness) | done | model | perplexity, generation, metrics |
 | serve (inference engine) | done | model, quant | engine, optimization, benchmarks |
 | ft (LoRA SFT) | done | train, model | SFT data prep, adapter train/merge |
-| quant (QLoRA int4) | todo | model | int4 quant, export |
+| quant (QLoRA int4) | done | model | int4 quant, export |
 | api + deployment | todo | serve | FastAPI /v1/completions, Docker, CI/CD |

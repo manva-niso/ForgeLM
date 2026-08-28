@@ -39,13 +39,18 @@ class LoRALinear(nn.Module):
         return self.base(x) + (x @ self.A.T) @ self.B.T * self.scaling
 
 
-def apply_lora(model: nn.Module, config: LoRAConfig, target_suffixes: tuple[str, ...]) -> list[str]:
+def apply_lora(
+    model: nn.Module,
+    config: LoRAConfig,
+    target_suffixes: tuple[str, ...],
+    allowed_types: tuple[type, ...] = (nn.Linear,),
+) -> list[str]:
     replaced: list[str] = []
 
     def _walk(module: nn.Module, prefix: str) -> None:
         for name, child in list(module.named_children()):
             full = f"{prefix}.{name}" if prefix else name
-            if isinstance(child, nn.Linear) and full.endswith(target_suffixes):
+            if isinstance(child, allowed_types) and full.endswith(target_suffixes):
                 if isinstance(module, nn.ModuleList):
                     module[int(name)] = LoRALinear(child, config)
                 else:
