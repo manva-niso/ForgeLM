@@ -167,3 +167,19 @@ Append per work session; do not rewrite old entries.
   model was broken (fresh-GPT RNG state masked the missing RMSNorm restore).
   Lesson: roundtrip tests on toy models can pass for the WRONG reason -
   always re-measure the real artifact (ppl delta) after loading.
+## Day 8b - The dolly domain lesson (2026-08-22)
+
+- **SFT teaches form, not facts:** a 5.25M model trained only on TinyStories
+  cannot answer general-knowledge questions no matter how well you fine-tune
+  it - there is no knowledge to draw on. The dolly model learned dolly's
+  response *distribution* (ppl 4.7 on dolly windows) while producing
+  confident garbage - the clearest possible demonstration that loss is not
+  understanding.
+- **Debug order matters:** before suspecting the pipeline (merge, lr, env),
+  we verified each layer: merge exact, zero-LoRA == baseline, deltas small.
+  The pipeline was never wrong; the *data distribution* was. The vertical
+  slice discipline (tests + direct measurement) made this provable instead
+  of debatable.
+- **Match SFT data to base knowledge:** story instructions over TinyStories
+  content => loss 1.96 and real instruction following. Domain alignment is
+  the highest-leverage choice in fine-tuning, above lr/rank/steps.

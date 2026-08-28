@@ -15,7 +15,7 @@ from pathlib import Path
 import torch
 
 from forger.ft.lora import LoRAConfig, apply_lora, convert_merged, count_lora_params, merge_lora
-from forger.ft.sft_data import load_dolly
+from forger.ft.story_sft_data import load_story_sft
 from forger.model.checkpoint import load_model_from_checkpoint
 from forger.tokenizer.bpe import BPETokenizer
 from forger.train.config import TrainConfig
@@ -45,7 +45,7 @@ def main(argv: list[str] | None = None) -> int:
         print("cuda unavailable; falling back to cpu")
         args.device = "cpu"
 
-    texts = load_dolly(args.examples)
+    texts = load_story_sft("data/tinystories_sample.jsonl", args.examples)
     split = int(len(texts) * 0.95)
     encoded = [tokenizer.encode(t) for t in texts]
     train_data = WindowDataset(
