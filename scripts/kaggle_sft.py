@@ -14,6 +14,8 @@ import sys
 import time
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 import torch
 
 from forger.ft.lora import LoRAConfig, apply_lora, convert_merged, count_lora_params, merge_lora
