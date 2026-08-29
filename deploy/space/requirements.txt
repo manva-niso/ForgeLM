@@ -1,0 +1,4 @@
+gradio>=5.0.0
+torch>=2.4.0
+pydantic>=2.7.0
+regex

@@ -2,17 +2,26 @@
 
 Train, fine-tune & serve a small edge/on-device language model from scratch.
 
-## Use the model (3 steps, no accounts needed)
+## Try it (public, no install)
 
+**Hosted demo:** open the public HuggingFace Space URL (once deployed):
+`https://manvaniso-forgelm.hf.space` — type a prompt, get a story.
+
+**Locally (3 steps):**
 ```powershell
 git clone https://github.com/manva-niso/ForgeLM.git
 cd ForgeLM
 uv sync --group dev
-uv run python scripts/smoke_infer.py --ckpt models/forgelm-baseline --prompt "Once upon a time"
+uv run python scripts/smoke_infer.py --ckpt models/forgelm-sft-story --prompt "### Instruction: Write a story about a cat
+### Response:"
 ```
 
-The weights ship inside this repo (`models/forgelm-baseline/`), so nothing is
-downloaded at runtime. Change `--prompt` and `--max-tokens` to generate more.
+**API (any HTTP client):**
+```powershell
+uv run uvicorn forger.serve.api:app --port 8000
+curl -X POST http://127.0.0.1:8000/v1/completions -H "Content-Type: application/json" \
+  -d "{\"prompt\": \"### Instruction: Write a story about a dog.\\n### Response:\", \"max_tokens\": 40}"
+```
 
 ## Development
 
