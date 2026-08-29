@@ -1,0 +1,4 @@
+# Generated at deploy time by scripts/prep_space.py - never commit copies
+forger/
+artifacts/
+models/
