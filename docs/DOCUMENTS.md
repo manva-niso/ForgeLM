@@ -24,6 +24,11 @@
 | `changelog.md` | One line per shipped change (append only). |
 | `development-log.md` | **Error log** — every bug: symptom → root cause → fix path; + implementation log. |
 | `thinking-log.md` | **Why log** — design reasoning, alternatives considered, corrections. |
+| `MODEL_CARD.md` | HF-style model card - details, eval, limitations, citation |
+| `security.md` | Security audit - pip-audit 0 vulns, API hardening, checklist |
+| `runbook.md` | Deploy/rollback/on-call procedures |
+| `sre.md` | SLOs, error budget, dashboards, alerts |
+| `release-notes-v1.0.0.md` | v1.0.0 release notes |
 | `PRODUCT_CONTRACT.md` | Product spec + acceptance criteria (≤25M params, ≤8MB 4-bit, <100ms CPU). |
 | `kaggle-notebook.md` | Kaggle setup, branch policy, notebook cells, gotchas. |
 | `decisions/ADR-01…05` | Architecture decision records (charter, tokenizer, model, train pipeline, baseline). |
