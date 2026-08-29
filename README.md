@@ -4,8 +4,12 @@ Train, fine-tune & serve a small edge/on-device language model from scratch.
 
 ## Try it (public, no install)
 
-**Hosted demo:** open the public HuggingFace Space URL (once deployed):
-`https://manvaniso-forgelm.hf.space` — type a prompt, get a story.
+**Hosted demo (free, no card):** deploy via Streamlit Community Cloud —
+sign in at https://share.streamlit.io with GitHub → **Create app** →
+repo `manva-niso/ForgeLM` → branch `main` → main file `app/streamlit_ui.py`
+→ Deploy. Public URL: `https://forgelm.streamlit.app` (type a prompt, get a
+story). Optional alternative: HF Space (free CPU basic) via
+`deploy/space/` + `scripts/prep_space.py`.
 
 **Locally (3 steps):**
 ```powershell

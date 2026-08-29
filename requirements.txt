@@ -1,0 +1,5 @@
+# For Streamlit Community Cloud (public demo deployment)
+streamlit>=1.40.0
+torch>=2.4.0
+pydantic>=2.7.0
+regex
