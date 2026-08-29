@@ -10,4 +10,4 @@
 | serve (inference engine) | done | model, quant | engine, optimization, benchmarks |
 | ft (LoRA SFT) | done | train, model | SFT data prep, adapter train/merge |
 | quant (QLoRA int4) | done | model | int4 quant, export |
-| api + deployment | done | serve | FastAPI /v1/completions, Docker, CI/CD |
+| api + deployment | done | serve | FastAPI /v1/completions, Docker, CI/CD, public demo |

@@ -4,12 +4,10 @@ Train, fine-tune & serve a small edge/on-device language model from scratch.
 
 ## Try it (public, no install)
 
-**Hosted demo (free, no card):** deploy via Streamlit Community Cloud —
-sign in at https://share.streamlit.io with GitHub → **Create app** →
-repo `manva-niso/ForgeLM` → branch `main` → main file `app/streamlit_ui.py`
-→ Deploy. Public URL: `https://forgelm.streamlit.app` (type a prompt, get a
-story). Optional alternative: HF Space (free CPU basic) via
-`deploy/space/` + `scripts/prep_space.py`.
+**Hosted demo (LIVE):** **https://forgelm-dep.streamlit.app/** — type a prompt,
+get a story. No install, no account. Free (Streamlit Community Cloud).
+Alternative hosting path (HF Space, free CPU basic): `deploy/space/` +
+`scripts/prep_space.py`.
 
 **Locally (3 steps):**
 ```powershell
