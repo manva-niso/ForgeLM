@@ -1,0 +1,15 @@
+.git
+.venv
+data
+checkpoints
+runs
+tests
+notebooks
+benchmarks
+docs
+Reads
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+.env
