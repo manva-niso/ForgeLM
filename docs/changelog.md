@@ -51,4 +51,4 @@ D11=08-31, D12=09-01). Detail lives in development-log.md.
 ## Upcoming
 - Day 10 (Sun 08-30): Optimized serving — ONNX export + ONNX Runtime.
 - Day 11 (Mon 08-31): API hardening + cloud deployment.
-- Day 12 (Tue 09-01): Security, model card, SRE + release.
+- Day 12 (Tue 09-01): Security, model card, SRE + release.- 2026-08-30 v0.4.0: ONNX serving - torch.onnx export (dynamo + onnxscript), ORTEngine (recompute decode), ONNX int8 (5.7MB), prefill 11.8K tok/s; honest: cached torch engine stays fastest for decode; ADR-10 + MODEL_UPDATE_GUIDE.md.
